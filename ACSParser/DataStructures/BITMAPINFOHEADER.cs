@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class BITMAPINFOHEADER
+public struct BITMAPINFOHEADER
 {
     public uint Size;
     public int Width;

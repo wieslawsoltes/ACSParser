@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class VOICEINFO
+public struct VOICEINFO
 {
     public Guid TTS_EngineID;
     public Guid TTS_ModeID;

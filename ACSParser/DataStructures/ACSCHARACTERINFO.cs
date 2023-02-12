@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class ACSCHARACTERINFO
+public struct ACSCHARACTERINFO
 {
     public ushort MinorVersion;
     public ushort MajorVersion;

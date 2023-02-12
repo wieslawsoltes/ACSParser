@@ -1,6 +1,9 @@
+using System.Runtime.InteropServices;
+
 namespace ACSParser;
 
-public class LOCALIZEDINFO
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct LOCALIZEDINFO
 {
     public ushort LanguageId;
     public string CharacterName;

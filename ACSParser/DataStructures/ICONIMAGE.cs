@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class ICONIMAGE
+public struct ICONIMAGE
 {
     public BITMAPINFOHEADER Header;
     public byte[] BitmapData;

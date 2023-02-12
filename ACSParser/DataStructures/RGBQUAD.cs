@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class RGBQUAD
+public struct RGBQUAD
 {
     public byte Red;
     public byte Green;

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class BALLOONINFO
+public struct BALLOONINFO
 {
     public byte NumTextLines;
     public byte CharsPerLine;

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace ACSParser;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public class TRAYICON
+public struct TRAYICON
 {
     public uint MonochromeBitmapSize;
     public ICONIMAGE MonochromeBitmap;
