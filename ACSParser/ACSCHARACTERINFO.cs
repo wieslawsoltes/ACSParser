@@ -46,5 +46,4 @@ public class ACSCHARACTERINFO
         characterInfo.AnimationStates = reader.ReadListWithSize<STATEINFO>().ToArray();
         return characterInfo;
     }
-
 }
