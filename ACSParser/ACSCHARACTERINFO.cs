@@ -25,7 +25,6 @@ public class ACSCHARACTERINFO
     public static ACSCHARACTERINFO Parse(BinaryReader reader)
     {
         var characterInfo = new ACSCHARACTERINFO();
-
         characterInfo.MinorVersion = reader.ReadUInt16();
         characterInfo.MajorVersion = reader.ReadUInt16();
         characterInfo.LocalizedInfo = ACSLOCATOR.Parse(reader);
@@ -40,9 +39,12 @@ public class ACSCHARACTERINFO
         characterInfo.BalloonInfo = BALLOONINFO.Parse(reader);
         characterInfo.ColorTable = reader.ReadStructs<PALETTECOLOR>(256);
         characterInfo.IsSystemTrayIconEnabled = reader.ReadBoolean();
-        characterInfo.SystemTrayIcon = TRAYICON.Parse(reader);
-        characterInfo.AnimationStates = reader.ReadListWithSize<STATEINFO>();
-
+        if (characterInfo.IsSystemTrayIconEnabled)
+        {
+            characterInfo.SystemTrayIcon = TRAYICON.Parse(reader);
+        }
+        characterInfo.AnimationStates = reader.ReadListWithSize<STATEINFO>().ToArray();
         return characterInfo;
     }
+
 }
