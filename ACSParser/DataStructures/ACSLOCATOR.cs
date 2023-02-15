@@ -1,19 +1,16 @@
-using System.Runtime.InteropServices;
+﻿namespace ACSParser;
 
-namespace ACSParser;
-
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ACSLOCATOR
 {
-    public uint Offset;
-    public uint Size;
+    public ULONG Offset;
+    public ULONG Size;
 
     public static ACSLOCATOR Parse(BinaryReader reader)
     {
         ACSLOCATOR locator = new ACSLOCATOR();
 
-        locator.Offset = reader.ReadUInt32();
-        locator.Size = reader.ReadUInt32();
+        locator.Offset = reader.ULONG();
+        locator.Size = reader.ULONG();
 
         return locator;
     }

@@ -1,14 +1,11 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ACSFRAMEINFO
 {
     public ACSFRAMEIMAGE[] Images;
-    public ushort AudioIndex;
-    public ushort Duration;
-    public short ExitFrameIndex;
+    public USHORT AudioIndex;
+    public USHORT Duration;
+    public SHORT ExitFrameIndex;
     public BRANCHINFO[] Branches;
     public ACSOVERLAYINFO[] Overlays;
 
@@ -16,12 +13,30 @@ public struct ACSFRAMEINFO
     {
         var frame = new ACSFRAMEINFO();
 
-        frame.Images = reader.ReadListWithSize<ACSFRAMEIMAGE>().ToArray();
-        frame.AudioIndex = reader.ReadUInt16();
-        frame.Duration = reader.ReadUInt16();
-        frame.ExitFrameIndex = reader.ReadInt16();
-        frame.Branches = reader.ReadListWithSize<BRANCHINFO>().ToArray();
-        frame.Overlays = reader.ReadListWithSize<ACSOVERLAYINFO>().ToArray();
+        USHORT frameImageCount = reader.USHORT();
+        frame.Images = new ACSFRAMEIMAGE[frameImageCount];
+        for (var i = 0; i < frameImageCount; i++)
+        {
+            frame.Images[i] = ACSFRAMEIMAGE.Parse(reader);
+        }   
+
+        frame.AudioIndex = reader.USHORT();
+        frame.Duration = reader.USHORT();
+        frame.ExitFrameIndex = reader.SHORT();
+
+        BYTE branchInfoCount = reader.BYTE();
+        frame.Branches = new BRANCHINFO[branchInfoCount];
+        for (var i = 0; i < branchInfoCount; i++)
+        {
+            frame.Branches[i] = BRANCHINFO.Parse(reader);
+        }   
+
+        BYTE overlayInfoCount = reader.BYTE();
+        frame.Overlays = new ACSOVERLAYINFO[overlayInfoCount];
+        for (var i = 0; i < overlayInfoCount; i++)
+        {
+            frame.Overlays[i] = ACSOVERLAYINFO.Parse(reader);
+        }      
 
         return frame;
     }

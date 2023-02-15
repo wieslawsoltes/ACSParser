@@ -1,35 +1,32 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct BALLOONINFO
 {
-    public byte NumTextLines;
-    public byte CharsPerLine;
+    public BYTE NumTextLines;
+    public BYTE CharsPerLine;
     public RGBQUAD ForegroundColor;
     public RGBQUAD BackgroundColor;
     public RGBQUAD BorderColor;
-    public string FontName;
-    public int FontHeight;
-    public int FontWeight;
-    public bool Italicized;
-    public byte Unknown;
+    public STRING FontName;
+    public LONG FontHeight;
+    public LONG FontWeight;
+    public BOOL Italicized;
+    public BYTE Unknown;
 
     public static BALLOONINFO Parse(BinaryReader reader)
     {
         BALLOONINFO info = new BALLOONINFO();
 
-        info.NumTextLines = reader.ReadByte();
-        info.CharsPerLine = reader.ReadByte();
+        info.NumTextLines = reader.BYTE();
+        info.CharsPerLine = reader.BYTE();
         info.ForegroundColor = RGBQUAD.Parse(reader);
         info.BackgroundColor = RGBQUAD.Parse(reader);
         info.BorderColor = RGBQUAD.Parse(reader);
-        info.FontName = reader.ReadNullTerminatedString(32);
-        info.FontHeight = reader.ReadInt32();
-        info.FontWeight = reader.ReadInt32();
-        info.Italicized = reader.ReadBoolean();
-        info.Unknown = reader.ReadByte();
+        info.FontName = STRING.Parse(reader);
+        info.FontHeight = reader.LONG();
+        info.FontWeight = reader.LONG();
+        info.Italicized = reader.BOOL();
+        info.Unknown = reader.BYTE();
 
         return info;
     }

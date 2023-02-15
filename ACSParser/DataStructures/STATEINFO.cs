@@ -1,27 +1,36 @@
-using System.Runtime.InteropServices;
+﻿namespace ACSParser;
 
-namespace ACSParser;
-
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
 public struct STATEINFO
 {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-    public string StateName;
-
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-    public string[] Animations;
+    public STRING StateName;
+    public STRING[] Animations;
 
     public static STATEINFO Parse(BinaryReader reader)
     {
-        STATEINFO stateInfo = new STATEINFO();
-        stateInfo.StateName = new string(reader.ReadChars(64)).TrimEnd('\0');
+        var stateInfo = new STATEINFO();
+        
+        stateInfo.StateName = STRING.Parse(reader);
 
-        ushort count = reader.ReadUInt16();
-        stateInfo.Animations = new string[count];
+        var count = reader.USHORT();
+ 
+        stateInfo.Animations = new STRING[count];
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
-            stateInfo.Animations[i] = new string(reader.ReadChars(64)).TrimEnd('\0');
+            stateInfo.Animations[i] = STRING.Parse(reader);
+        }
+
+        return stateInfo;
+    }
+
+    public static STATEINFO[] ParseList(BinaryReader reader)
+    {
+        USHORT stateInfoCount = reader.USHORT();
+
+        STATEINFO[] stateInfo = new STATEINFO[stateInfoCount];
+        for (var i = 0; i < stateInfoCount; i++)
+        {
+            stateInfo[i] = STATEINFO.Parse(reader);
         }
 
         return stateInfo;

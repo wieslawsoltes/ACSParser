@@ -1,22 +1,24 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct TRAYICON
 {
-    public uint MonochromeBitmapSize;
+    public ULONG MonochromeBitmapSize;
     public ICONIMAGE MonochromeBitmap;
-    public uint ColorBitmapSize;
+    public ULONG ColorBitmapSize;
     public ICONIMAGE ColorBitmap;
 
     public static TRAYICON Parse(BinaryReader reader)
     {
         TRAYICON trayIcon = new TRAYICON();
-        trayIcon.MonochromeBitmapSize = reader.ReadUInt32();
-        trayIcon.MonochromeBitmap = ICONIMAGE.Parse(reader, trayIcon.MonochromeBitmapSize);
-        trayIcon.ColorBitmapSize = reader.ReadUInt32();
-        trayIcon.ColorBitmap = ICONIMAGE.Parse(reader, trayIcon.ColorBitmapSize);
+
+        trayIcon.MonochromeBitmapSize = reader.ULONG();
+        trayIcon.MonochromeBitmap = ICONIMAGE.Parse(reader);
+        // TODO: reader.ReadBytes((int)trayIcon.MonochromeBitmapSize);
+
+        trayIcon.ColorBitmapSize = reader.ULONG();
+        trayIcon.ColorBitmap = ICONIMAGE.Parse(reader);
+        // TODO: reader.ReadBytes((int)trayIcon.ColorBitmapSize);
+
         return trayIcon;
     }
 }

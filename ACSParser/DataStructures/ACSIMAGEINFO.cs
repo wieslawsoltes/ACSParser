@@ -1,40 +1,43 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ACSIMAGEINFO
 {
     public ACSLOCATOR InfoLocation;
-    public uint Checksum;
-    public byte Unknown;
-    public ushort Width;
-    public ushort Height;
-    public bool IsCompressed;
-    public DATABLOCK ImageData;
-    public COMPRESSED RegionData;
+    public ULONG Checksum;
 
     public static ACSIMAGEINFO Parse(BinaryReader reader)
     {
-        ACSIMAGEINFO imageInfo = new ACSIMAGEINFO
-        {
-            InfoLocation = ACSLOCATOR.Parse(reader),
-            Checksum = reader.ReadUInt32(),
-            Unknown = reader.ReadByte(),
-            Width = reader.ReadUInt16(),
-            Height = reader.ReadUInt16(),
-            IsCompressed = reader.ReadBoolean()
-        };
+        ACSIMAGEINFO imageInfo = new ACSIMAGEINFO();
 
-        int imageDataSize = imageInfo.Width * imageInfo.Height;
-        if (imageInfo.IsCompressed)
-        {
-            imageDataSize = ((imageInfo.Width + 3) & 0xFC) * imageInfo.Height;
-        }
+        imageInfo.InfoLocation = ACSLOCATOR.Parse(reader);
+        imageInfo.Checksum = reader.ULONG();
 
-        imageInfo.ImageData = DATABLOCK.Parse(reader, imageDataSize);
-        imageInfo.RegionData = COMPRESSED.Parse(reader);
-
+        // TODO: Read IMAGE from InfoLocation.
+        
         return imageInfo;
+    }
+}
+
+public struct IMAGE
+{
+    public BYTE Unknown;
+    public USHORT Width;
+    public USHORT Height;
+    public BOOL IsImageDataCompressed;
+    public DATABLOCK ImageData;
+    public COMPRESSED RegionData;
+
+    public static IMAGE Parse(BinaryReader reader)
+    {
+        IMAGE image = new IMAGE();
+
+        image.Unknown = reader.BYTE();
+        image.Width = reader.USHORT();
+        image.Height = reader.USHORT();
+        image.IsImageDataCompressed = reader.BOOL();
+        image.ImageData = DATABLOCK.Parse(reader);
+        image.RegionData = COMPRESSED.Parse(reader);
+
+        return image;
     }
 }

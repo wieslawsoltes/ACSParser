@@ -1,24 +1,23 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential)]
 public struct RGNDATAHEADER
 {
-    public uint dwSize;
-    public uint iType;
-    public uint nCount;
-    public uint nRgnSize;
-    public RECT rcBound;
+    public ULONG Size;
+    public ULONG Type;
+    public ULONG Count;
+    public ULONG RgnSize;
+    public RECT Bound;
 
     public static RGNDATAHEADER Parse(BinaryReader reader)
     {
         RGNDATAHEADER rgndataheader = new RGNDATAHEADER();
-        rgndataheader.dwSize = reader.ReadUInt32();
-        rgndataheader.iType = reader.ReadUInt32();
-        rgndataheader.nCount = reader.ReadUInt32();
-        rgndataheader.nRgnSize = reader.ReadUInt32();
-        rgndataheader.rcBound = RECT.Parse(reader);
+
+        rgndataheader.Size = reader.ULONG();
+        rgndataheader.Type = reader.ULONG();
+        rgndataheader.Count = reader.ULONG();
+        rgndataheader.RgnSize = reader.ULONG();
+        rgndataheader.Bound = RECT.Parse(reader);
+
         return rgndataheader;
     }
 }

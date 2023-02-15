@@ -1,40 +1,35 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct VOICEINFO
 {
-    public Guid TTS_EngineID;
-    public Guid TTS_ModeID;
-    public uint Speed;
-    public ushort Pitch;
-    public bool ExtraDataPresent;
-
-    // Extra data
-    public ushort LanguageID;
-    public string LanguageDialect;
-    public ushort Gender;
-    public ushort Age;
-    public string Style;
+    public GUID TTS_EngineID;
+    public GUID TTS_ModeID;
+    public ULONG Speed;
+    public USHORT Pitch;
+    public BOOL ExtraDataPresent;
+    public LANGID LanguageID;
+    public STRING LanguageDialect;
+    public USHORT Gender;
+    public USHORT Age;
+    public STRING Style;
 
     public static VOICEINFO Parse(BinaryReader reader)
     {
         var info = new VOICEINFO();
 
-        info.TTS_EngineID = new Guid(reader.ReadBytes(16));
-        info.TTS_ModeID = new Guid(reader.ReadBytes(16));
-        info.Speed = reader.ReadUInt32();
-        info.Pitch = reader.ReadUInt16();
-        info.ExtraDataPresent = reader.ReadBoolean();
+        info.TTS_EngineID = GUID.Parse(reader);
+        info.TTS_ModeID = GUID.Parse(reader);
+        info.Speed = reader.ULONG();
+        info.Pitch = reader.USHORT();
+        info.ExtraDataPresent = reader.BOOL();
 
-        if (info.ExtraDataPresent)
+        if (info.ExtraDataPresent != 0x00)
         {
-            info.LanguageID = reader.ReadUInt16();
-            info.LanguageDialect = reader.ReadStringNullTerminated();
-            info.Gender = reader.ReadUInt16();
-            info.Age = reader.ReadUInt16();
-            info.Style = reader.ReadStringNullTerminated();
+            info.LanguageID = LANGID.Parse(reader);
+            info.LanguageDialect = STRING.Parse(reader);
+            info.Gender = reader.USHORT();
+            info.Age = reader.USHORT();
+            info.Style = STRING.Parse(reader);
         }
 
         return info;

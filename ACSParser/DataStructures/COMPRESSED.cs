@@ -1,21 +1,28 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct COMPRESSED
 {
-    public uint CompressedSize;
-    public uint UncompressedSize;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-    public byte[] Data;
+    public ULONG CompressedSize;
+    public ULONG UncompressedSize;
+    public BYTE[] Data;
 
     public static COMPRESSED Parse(BinaryReader reader)
     {
         var compressed = new COMPRESSED();
-        compressed.CompressedSize = reader.ReadUInt32();
-        compressed.UncompressedSize = reader.ReadUInt32();
-        compressed.Data = reader.ReadBytes((int)compressed.CompressedSize);
+
+        compressed.CompressedSize = reader.ULONG();
+        compressed.UncompressedSize = reader.ULONG();
+
+        if (compressed.CompressedSize == 0)
+        {
+            compressed.Data = reader.ReadBytes((int)compressed.UncompressedSize);
+        }
+        else
+        {
+            // TODO: Decompress. Data size is compressed.UncompressedSize after decompression.
+            compressed.Data = reader.ReadBytes((int)compressed.CompressedSize);
+        }
+
         return compressed;
     }
 }

@@ -1,36 +1,35 @@
-using System.Runtime.InteropServices;
-
 namespace ACSParser;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct BITMAPINFOHEADER
 {
-    public uint Size;
-    public int Width;
-    public int Height;
-    public ushort Planes;
-    public ushort BitCount;
-    public uint Compression;
-    public uint SizeImage;
-    public int XPelsPerMeter;
-    public int YPelsPerMeter;
-    public uint ClrUsed;
-    public uint ClrImportant;
+    public ULONG Size;
+    public LONG Width;
+    public LONG Height;
+    public USHORT Planes;
+    public USHORT BitCount;
+    public ULONG Compression;
+    public ULONG SizeImage;
+    public LONG XPelsPerMeter;
+    public LONG YPelsPerMeter;
+    public ULONG ClrUsed;
+    public ULONG ClrImportant;
 
     public static BITMAPINFOHEADER Parse(BinaryReader reader)
     {
         BITMAPINFOHEADER header = new BITMAPINFOHEADER();
-        header.Size = reader.ReadUInt32();
-        header.Width = reader.ReadInt32();
-        header.Height = reader.ReadInt32();
-        header.Planes = reader.ReadUInt16();
-        header.BitCount = reader.ReadUInt16();
-        header.Compression = reader.ReadUInt32();
-        header.SizeImage = reader.ReadUInt32();
-        header.XPelsPerMeter = reader.ReadInt32();
-        header.YPelsPerMeter = reader.ReadInt32();
-        header.ClrUsed = reader.ReadUInt32();
-        header.ClrImportant = reader.ReadUInt32();
+
+        header.Size = reader.ULONG();
+        header.Width = reader.LONG();
+        header.Height = reader.LONG();
+        header.Planes = reader.USHORT();
+        header.BitCount = reader.USHORT();
+        header.Compression = reader.ULONG();
+        header.SizeImage = reader.ULONG();
+        header.XPelsPerMeter = reader.LONG();
+        header.YPelsPerMeter = reader.LONG();
+        header.ClrUsed = reader.ULONG();
+        header.ClrImportant = reader.ULONG();
+
         return header;
     }
 }
