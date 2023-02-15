@@ -33,16 +33,41 @@ public struct ACSCHARACTERINFO
         characterInfo.Flags = reader.ULONG();
         characterInfo.AnimationSetMajorVersion = reader.USHORT();
         characterInfo.AnimationSetMinorVersion = reader.USHORT();
-        characterInfo.VoiceOutputInfo = VOICEINFO.Parse(reader);
-        characterInfo.BalloonInfo = BALLOONINFO.Parse(reader);
+
+        if (characterInfo.IsVoiceOutputEnabled)
+        {
+            characterInfo.VoiceOutputInfo = VOICEINFO.Parse(reader);
+        }
+
+        if (characterInfo.IsWordBalloonEnabled)
+        {
+            characterInfo.BalloonInfo = BALLOONINFO.Parse(reader);
+        }
+
         characterInfo.ColorTable = PALETTECOLOR.ParseList(reader);
+
         characterInfo.IsSystemTrayIconEnabled = reader.BOOL();
         if (characterInfo.IsSystemTrayIconEnabled != 0x00)
         {
             characterInfo.SystemTrayIcon = TRAYICON.Parse(reader);
         }
+
         characterInfo.AnimationStates = STATEINFO.ParseList(reader);
 
         return characterInfo;
     }
+
+    public bool IsVoiceOutputEnabled => (Flags & 0x10) != 0;
+
+    public bool IsWordBalloonDisabled => (Flags & 0x100) != 0;
+
+    public bool IsWordBalloonEnabled => (Flags & 0x200) != 0;
+
+    public bool IsSizeToTextEnabled => (Flags & 0x10000) != 0;
+
+    public bool IsAutoHideDisabled => (Flags & 0x20000) != 0;
+
+    public bool IsAutoPaceDisabled => (Flags & 0x40000) != 0;
+
+    public bool IsStandardAnimationSetSupported => (Flags & 0x100000) != 0;
 }
