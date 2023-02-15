@@ -14,7 +14,8 @@ class Program
         //}
 
         //var acsFile = args[0];
-        var acsFile = @"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS"; 
+        //var acsFile = @"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS"; 
+        var acsFile = @"/Users/wieslawsoltes/Documents/GitHub/Acdparser/clippitMS/CLIPPIT.ACS";
 
         if (!File.Exists(acsFile))
         {
