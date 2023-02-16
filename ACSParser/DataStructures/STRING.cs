@@ -4,8 +4,8 @@ namespace ACSParser.DataStructures;
 
 public struct STRING
 {
-    public ULONG Count;
-    public WCHAR[] Characters;
+    public ULONG Count; // 4 bytes
+    public WCHAR[] Characters; // Characters.Length * 2 bytes
 
     public static STRING Parse(BinaryReader reader)
     {
