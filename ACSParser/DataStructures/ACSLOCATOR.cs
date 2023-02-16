@@ -2,8 +2,8 @@
 
 public struct ACSLOCATOR
 {
-    public ULONG Offset;
-    public ULONG Size;
+    public ULONG Offset; // 4 bytes
+    public ULONG Size; // 4 bytes
 
     public static ACSLOCATOR Parse(BinaryReader reader)
     {
