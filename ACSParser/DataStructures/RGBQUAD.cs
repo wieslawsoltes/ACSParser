@@ -2,10 +2,10 @@ namespace ACSParser.DataStructures;
 
 public struct RGBQUAD
 {
-    public BYTE Red;
-    public BYTE Green;
-    public BYTE Blue;
-    public BYTE Reserved;
+    public BYTE Red; // 1 byte
+    public BYTE Green; // 1 byte
+    public BYTE Blue; // 1 byte
+    public BYTE Reserved; // 1 byte
 
     public static RGBQUAD Parse(BinaryReader reader)
     {
