@@ -23,16 +23,16 @@ public struct ACSCHARACTERINFO
     {
         ACSCHARACTERINFO characterInfo = new ACSCHARACTERINFO();
 
-        characterInfo.MinorVersion = reader.USHORT();
-        characterInfo.MajorVersion = reader.USHORT();
-        characterInfo.LocalizedInfo = ACSLOCATOR.Parse(reader);
-        characterInfo.UniqueId = GUID.Parse(reader);
-        characterInfo.CharacterWidth = reader.USHORT();
-        characterInfo.CharacterHeight = reader.USHORT();
-        characterInfo.TransparentColorIndex = reader.BYTE();
-        characterInfo.Flags = reader.ULONG();
-        characterInfo.AnimationSetMajorVersion = reader.USHORT();
-        characterInfo.AnimationSetMinorVersion = reader.USHORT();
+        characterInfo.MinorVersion = reader.USHORT(); // 2 bytes
+        characterInfo.MajorVersion = reader.USHORT(); // 2 bytes
+        characterInfo.LocalizedInfo = ACSLOCATOR.Parse(reader); // 8 bytes
+        characterInfo.UniqueId = GUID.Parse(reader); // 16 bytes
+        characterInfo.CharacterWidth = reader.USHORT(); // 2 bytes
+        characterInfo.CharacterHeight = reader.USHORT(); // 2 bytes
+        characterInfo.TransparentColorIndex = reader.BYTE(); // 1 bytes
+        characterInfo.Flags = reader.ULONG(); // 4 bytes
+        characterInfo.AnimationSetMajorVersion = reader.USHORT(); // 2 bytes
+        characterInfo.AnimationSetMinorVersion = reader.USHORT(); // 2 bytes
 
         if (characterInfo.IsVoiceOutputEnabled)
         {
