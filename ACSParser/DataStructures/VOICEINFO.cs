@@ -2,17 +2,18 @@ namespace ACSParser.DataStructures;
 
 public struct VOICEINFO
 {
-    public GUID TTS_EngineID;
-    public GUID TTS_ModeID;
-    public ULONG Speed;
-    public USHORT Pitch;
-    public BOOL ExtraDataPresent;
-    public LANGID LanguageID;
+    public GUID TTS_EngineID; // 16 bytes
+    public GUID TTS_ModeID; // 16 bytes
+    public ULONG Speed; // 4 bytes
+    public USHORT Pitch; // 2 bytes
+    public BOOL ExtraDataPresent; // 1 byte
+    public LANGID LanguageID; // 2 bytes
     public STRING LanguageDialect;
-    public USHORT Gender;
-    public USHORT Age;
+    public USHORT Gender; // 2 bytes
+    public USHORT Age; // 2 bytes
     public STRING Style;
 
+    // TODO: Parse not tested.
     public static VOICEINFO Parse(BinaryReader reader)
     {
         var info = new VOICEINFO();
