@@ -3,12 +3,13 @@ namespace ACSParser.DataStructures;
 public struct ACSFRAMEINFO
 {
     public ACSFRAMEIMAGE[] Images;
-    public USHORT AudioIndex;
-    public USHORT Duration;
-    public SHORT ExitFrameIndex;
+    public USHORT AudioIndex; // 2 bytes
+    public USHORT Duration; // 2 bytes
+    public SHORT ExitFrameIndex; // 2 bytes
     public BRANCHINFO[] Branches;
     public ACSOVERLAYINFO[] Overlays;
 
+    // TODO: Parse not tested.
     public static ACSFRAMEINFO Parse(BinaryReader reader)
     {
         var frame = new ACSFRAMEINFO();
