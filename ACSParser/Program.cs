@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using ACSParser.DataStructures;
 
 namespace ACSParser;
 
@@ -14,8 +13,8 @@ class Program
         //}
 
         //var acsFile = args[0];
-        //var acsFile = @"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS"; 
-        var acsFile = @"/Users/wieslawsoltes/Documents/GitHub/Acdparser/clippitMS/CLIPPIT.ACS";
+        var acsFile = @"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS"; 
+        //var acsFile = @"/Users/wieslawsoltes/Documents/GitHub/Acdparser/clippitMS/CLIPPIT.ACS";
 
         if (!File.Exists(acsFile))
         {
@@ -30,19 +29,25 @@ class Program
             
             var header = ACSHEADER.Parse(reader);
             Console.WriteLine("ACS File Header:");
-            Console.WriteLine("  Signature: 0x{0:X8}", header.Signature);
-            Console.WriteLine("  Character Info Location: {0} (size {1} bytes)", header.CharacterInfo.Offset, header.CharacterInfo.Size);
-            Console.WriteLine("  Animation Info List Location: {0} (size {1} bytes)", header.AnimationInfoList.Offset, header.AnimationInfoList.Size);
-            Console.WriteLine("  Image Info List Location: {0} (size {1} bytes)", header.ImageInfoList.Offset, header.ImageInfoList.Size);
-            Console.WriteLine("  Audio Info List Location: {0} (size {1} bytes)", header.AudioInfoList.Offset, header.AudioInfoList.Size);
-
+            Console.WriteLine("  Signature: 0x{0:X8}", 
+                header.Signature);
+            Console.WriteLine("  Character Info Location: {0} (size {1} bytes)", 
+                header.CharacterInfo.Offset, 
+                header.CharacterInfo.Size);
+            Console.WriteLine("  Animation Info List Location: {0} (size {1} bytes)", 
+                header.AnimationInfoList.Offset,
+                header.AnimationInfoList.Size);
+            Console.WriteLine("  Image Info List Location: {0} (size {1} bytes)", 
+                header.ImageInfoList.Offset, 
+                header.ImageInfoList.Size);
+            Console.WriteLine("  Audio Info List Location: {0} (size {1} bytes)", 
+                header.AudioInfoList.Offset, 
+                header.AudioInfoList.Size);
 
             input.Seek(header.CharacterInfo.Offset, SeekOrigin.Begin);
             var characterInfo = ACSCHARACTERINFO.Parse(reader);
 
-
-
-
+            // TODO:
         }
         catch (Exception ex)
         {
