@@ -5,6 +5,7 @@ public struct RGNDATA
     public RGNDATAHEADER Header;
     public RECT[] Rectangles;
 
+    // TODO: Parse not tested.
     public static RGNDATA Parse(BinaryReader reader)
     {
         RGNDATA data = new RGNDATA();
