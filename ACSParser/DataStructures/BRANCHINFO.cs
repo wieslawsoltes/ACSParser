@@ -2,9 +2,10 @@ namespace ACSParser.DataStructures;
 
 public struct BRANCHINFO
 {
-    public USHORT FrameIndex;
-    public USHORT Probability;
+    public USHORT FrameIndex; // 2 bytes
+    public USHORT Probability; // 2 bytes
 
+    // TODO: Parse not tested.
     public static BRANCHINFO Parse(BinaryReader reader)
     {
         BRANCHINFO branch = new BRANCHINFO();
