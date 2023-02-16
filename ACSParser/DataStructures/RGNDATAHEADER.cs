@@ -2,12 +2,13 @@ namespace ACSParser.DataStructures;
 
 public struct RGNDATAHEADER
 {
-    public ULONG Size;
-    public ULONG Type;
-    public ULONG Count;
-    public ULONG RgnSize;
-    public RECT Bound;
+    public ULONG Size; // 4 bytes
+    public ULONG Type; // 4 bytes
+    public ULONG Count; // 4 bytes
+    public ULONG RgnSize; // 4 bytes
+    public RECT Bound; // 16 bytes
 
+    // TODO: Parse not tested.
     public static RGNDATAHEADER Parse(BinaryReader reader)
     {
         RGNDATAHEADER rgndataheader = new RGNDATAHEADER();
