@@ -7,6 +7,7 @@ public struct ICONIMAGE
     public BYTE[] XORMaskBits;
     public BYTE[] ANDMaskBits;
 
+    // TODO: Parse not tested.
      public static ICONIMAGE Parse(BinaryReader reader)
     {
         ICONIMAGE iconImage = new ICONIMAGE();
