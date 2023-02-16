@@ -2,11 +2,11 @@ namespace ACSParser.DataStructures;
 
 public struct ACSHEADER
 {
-    public ULONG Signature;
-    public ACSLOCATOR CharacterInfo;
-    public ACSLOCATOR AnimationInfoList;
-    public ACSLOCATOR ImageInfoList;
-    public ACSLOCATOR AudioInfoList;
+    public ULONG Signature; // 4 bytes
+    public ACSLOCATOR CharacterInfo; // 8 bytes
+    public ACSLOCATOR AnimationInfoList; // 8 bytes
+    public ACSLOCATOR ImageInfoList; // 8 bytes
+    public ACSLOCATOR AudioInfoList; // 8 bytes
 
     public static ACSHEADER Parse(BinaryReader reader)
     {
