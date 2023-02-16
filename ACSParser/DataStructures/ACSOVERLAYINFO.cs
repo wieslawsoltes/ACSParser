@@ -2,17 +2,18 @@ namespace ACSParser.DataStructures;
 
 public struct ACSOVERLAYINFO
 {
-    public BYTE OverlayType;
-    public BOOL ReplaceTopImage;
-    public USHORT ImageIndex;
-    public BYTE Unknown;
-    public BOOL RegionDataPresent;
-    public SHORT XOffset;
-    public SHORT YOffset;
-    public USHORT Width;
-    public USHORT Height;
+    public BYTE OverlayType; // 1 byte
+    public BOOL ReplaceTopImage; // 1 byte
+    public USHORT ImageIndex; // 2 bytes
+    public BYTE Unknown; // 1 byte
+    public BOOL RegionDataPresent; // 1 byte
+    public SHORT XOffset; // 2 bytes
+    public SHORT YOffset; // 2 bytes
+    public USHORT Width; // 2 bytes
+    public USHORT Height; // 2 bytes
     public DATABLOCK RegionData;
 
+    // TODO: Parse not tested.
     public static ACSOVERLAYINFO Parse(BinaryReader reader)
     {
         var overlayInfo = new ACSOVERLAYINFO();
