@@ -2,11 +2,12 @@ namespace ACSParser.DataStructures;
 
 public struct LOCALIZEDINFO
 {
-    public LANGID LanguageId;
+    public LANGID LanguageId; // 2 bytes
     public STRING CharacterName;
     public STRING CharacterDescription;
     public STRING CharacterExtraData;
 
+    // TODO: Parse not tested.
     public static LOCALIZEDINFO Parse(BinaryReader reader)
     {
         LOCALIZEDINFO localizedInfo = new LOCALIZEDINFO();
