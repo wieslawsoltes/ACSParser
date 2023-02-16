@@ -2,20 +2,20 @@ namespace ACSParser.DataStructures;
 
 public struct ACSCHARACTERINFO
 {
-    public USHORT MinorVersion;
-    public USHORT MajorVersion;
-    public ACSLOCATOR LocalizedInfo;
-    public GUID UniqueId;
-    public USHORT CharacterWidth;
-    public USHORT CharacterHeight;
-    public BYTE TransparentColorIndex;
-    public ULONG Flags;
-    public USHORT AnimationSetMajorVersion;
-    public USHORT AnimationSetMinorVersion;
+    public USHORT MinorVersion; // 2 bytes
+    public USHORT MajorVersion; // 2 bytes
+    public ACSLOCATOR LocalizedInfo; // 8 bytes
+    public GUID UniqueId; // 16 bytes
+    public USHORT CharacterWidth; // 2 bytes
+    public USHORT CharacterHeight; // 2 bytes
+    public BYTE TransparentColorIndex; // 1 byte
+    public ULONG Flags; // 4 bytes
+    public USHORT AnimationSetMajorVersion; // 2 bytes
+    public USHORT AnimationSetMinorVersion; // 2 bytes
     public VOICEINFO VoiceOutputInfo;
     public BALLOONINFO BalloonInfo;
-    public PALETTECOLOR[] ColorTable;
-    public BOOL IsSystemTrayIconEnabled;
+    public PALETTECOLOR[] ColorTable;  // ColorTable.Length * 4 bytes
+    public BOOL IsSystemTrayIconEnabled; // 1 byte
     public TRAYICON SystemTrayIcon;
     public STATEINFO[] AnimationStates;
 
