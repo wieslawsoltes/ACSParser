@@ -2,10 +2,11 @@ namespace ACSParser.DataStructures;
 
 public struct COMPRESSED
 {
-    public ULONG CompressedSize;
-    public ULONG UncompressedSize;
-    public BYTE[] Data;
+    public ULONG CompressedSize; // 4 bytes
+    public ULONG UncompressedSize; // 4 bytes
+    public BYTE[] Data; // Data.Length * 1 byte
 
+    // TODO: Parse not tested.
     public static COMPRESSED Parse(BinaryReader reader)
     {
         var compressed = new COMPRESSED();
