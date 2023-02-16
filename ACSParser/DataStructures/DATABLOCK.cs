@@ -2,9 +2,10 @@ namespace ACSParser.DataStructures;
 
 public struct DATABLOCK
 {
-    public ULONG Size;
-    public BYTE[] Data;
+    public ULONG Size; // 4 bytes
+    public BYTE[] Data; // Data.Length * 1 byte
 
+    // TODO: Parse not tested.
     public static DATABLOCK Parse(BinaryReader reader)
     {
         DATABLOCK datablock = new DATABLOCK();
