@@ -1,4 +1,4 @@
-namespace ACSParser;
+namespace ACSParser.DataStructures;
 
 public struct ACSANIMATIONINFO
 {
