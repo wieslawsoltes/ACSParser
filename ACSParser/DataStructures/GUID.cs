@@ -2,10 +2,10 @@
 
 public struct GUID
 {
-    public ULONG Data1;
-    public USHORT Data2;
-    public USHORT Data3;
-    public BYTE[] Data4;
+    public ULONG Data1; // 4 bytes
+    public USHORT Data2; // 2 bytes
+    public USHORT Data3; // 2 bytes
+    public BYTE[] Data4; // 8 bytes
 
     public static GUID Parse(BinaryReader reader)
     {
