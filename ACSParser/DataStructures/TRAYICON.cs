@@ -2,11 +2,12 @@ namespace ACSParser.DataStructures;
 
 public struct TRAYICON
 {
-    public ULONG MonochromeBitmapSize;
+    public ULONG MonochromeBitmapSize; // 4 bytes
     public ICONIMAGE MonochromeBitmap;
-    public ULONG ColorBitmapSize;
+    public ULONG ColorBitmapSize; // 4 bytes
     public ICONIMAGE ColorBitmap;
 
+    // TODO: Parse not tested.
     public static TRAYICON Parse(BinaryReader reader)
     {
         TRAYICON trayIcon = new TRAYICON();
