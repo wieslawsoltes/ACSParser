@@ -30,12 +30,13 @@ public struct ACSCHARACTERINFO
         characterInfo.CharacterWidth = reader.USHORT(); // 2 bytes
         characterInfo.CharacterHeight = reader.USHORT(); // 2 bytes
         characterInfo.TransparentColorIndex = reader.BYTE(); // 1 bytes
+
         characterInfo.Flags = reader.ULONG(); // 4 bytes
+        // var flags = Convert.ToString(characterInfo.Flags, 2).PadLeft(32, '0');
+        // Console.WriteLine($"Flags: {flags}b 0x{characterInfo.Flags:X8}");
+
         characterInfo.AnimationSetMajorVersion = reader.USHORT(); // 2 bytes
         characterInfo.AnimationSetMinorVersion = reader.USHORT(); // 2 bytes
-
-        //var flags = Convert.ToString(characterInfo.Flags, 2).PadLeft(32, '0');
-        //Console.WriteLine($"Flags: {flags}b 0x{characterInfo.Flags:X8}");
 
         if (characterInfo.IsVoiceOutputEnabled)
         {
