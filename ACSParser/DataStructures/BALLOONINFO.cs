@@ -23,6 +23,7 @@ public struct BALLOONINFO
         info.BackgroundColor = RGBQUAD.Parse(reader);
         info.BorderColor = RGBQUAD.Parse(reader);
         info.FontName = STRING.Parse(reader);
+        // TODO: FontHeight=-13
         info.FontHeight = reader.LONG();
         info.FontWeight = reader.LONG();
         info.Italicized = reader.BOOL();
