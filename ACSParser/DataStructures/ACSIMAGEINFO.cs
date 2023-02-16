@@ -2,9 +2,10 @@ namespace ACSParser.DataStructures;
 
 public struct ACSIMAGEINFO
 {
-    public ACSLOCATOR InfoLocation;
-    public ULONG Checksum;
+    public ACSLOCATOR InfoLocation; // 8 bytes
+    public ULONG Checksum; // 4 bytes
 
+    // TODO: Parse not tested.
     public static ACSIMAGEINFO Parse(BinaryReader reader)
     {
         ACSIMAGEINFO imageInfo = new ACSIMAGEINFO();
@@ -20,13 +21,14 @@ public struct ACSIMAGEINFO
 
 public struct IMAGE
 {
-    public BYTE Unknown;
-    public USHORT Width;
-    public USHORT Height;
-    public BOOL IsImageDataCompressed;
+    public BYTE Unknown; // 1 byte
+    public USHORT Width; // 2 bytes
+    public USHORT Height; // 2 bytes
+    public BOOL IsImageDataCompressed; // 1 byte
     public DATABLOCK ImageData;
     public COMPRESSED RegionData;
 
+    // TODO: Parse not tested.
     public static IMAGE Parse(BinaryReader reader)
     {
         IMAGE image = new IMAGE();
