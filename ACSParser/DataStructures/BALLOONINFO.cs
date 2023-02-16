@@ -2,16 +2,16 @@ namespace ACSParser.DataStructures;
 
 public struct BALLOONINFO
 {
-    public BYTE NumTextLines;
-    public BYTE CharsPerLine;
-    public RGBQUAD ForegroundColor;
-    public RGBQUAD BackgroundColor;
-    public RGBQUAD BorderColor;
+    public BYTE NumTextLines; // 1 byte
+    public BYTE CharsPerLine; // 1 byte
+    public RGBQUAD ForegroundColor; // 4 bytes
+    public RGBQUAD BackgroundColor; // 4 bytes
+    public RGBQUAD BorderColor; // 4 bytes
     public STRING FontName;
-    public LONG FontHeight;
-    public LONG FontWeight;
-    public BOOL Italicized;
-    public BYTE Unknown;
+    public LONG FontHeight; // 4 bytes
+    public LONG FontWeight; // 4 bytes
+    public BOOL Italicized; // 1 byte
+    public BYTE Unknown; // 1 byte
 
     public static BALLOONINFO Parse(BinaryReader reader)
     {
