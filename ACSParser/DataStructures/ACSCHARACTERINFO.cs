@@ -60,25 +60,19 @@ public struct ACSCHARACTERINFO
         return characterInfo;
     }
 
-    private static bool IsBitSet(ULONG number, int bitPosition)
-    {
-        ULONG mask = (ULONG)1 << bitPosition;
-        return (number & mask) != 0;
-    }
+    public bool IsVoiceOutputDisabled => Util.IsBitSet(Flags, 4);
 
-    public bool IsVoiceOutputDisabled => IsBitSet(Flags, 4);
-    
-    public bool IsVoiceOutputEnabled => IsBitSet(Flags, 5);
+    public bool IsVoiceOutputEnabled => Util.IsBitSet(Flags, 5);
 
-    public bool IsWordBalloonDisabled => IsBitSet(Flags, 8);
+    public bool IsWordBalloonDisabled => Util.IsBitSet(Flags, 8);
 
-    public bool IsWordBalloonEnabled => IsBitSet(Flags, 9);
+    public bool IsWordBalloonEnabled => Util.IsBitSet(Flags, 9);
 
-    public bool IsSizeToTextEnabled => IsBitSet(Flags, 16);
+    public bool IsSizeToTextEnabled => Util.IsBitSet(Flags, 16);
 
-    public bool IsAutoHideDisabled => IsBitSet(Flags, 17);
+    public bool IsAutoHideDisabled => Util.IsBitSet(Flags, 17);
 
-    public bool IsAutoPaceDisabled => IsBitSet(Flags, 18);
+    public bool IsAutoPaceDisabled => Util.IsBitSet(Flags, 18);
 
-    public bool IsStandardAnimationSetSupported => IsBitSet(Flags, 20);
+    public bool IsStandardAnimationSetSupported => Util.IsBitSet(Flags, 20);
 }
