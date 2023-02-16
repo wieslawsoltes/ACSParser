@@ -2,7 +2,7 @@ namespace ACSParser.DataStructures;
 
 public struct PALETTECOLOR
 {
-    public RGBQUAD Color;
+    public RGBQUAD Color; // 4 bytes
 
     public static PALETTECOLOR Parse(BinaryReader reader)
     {
