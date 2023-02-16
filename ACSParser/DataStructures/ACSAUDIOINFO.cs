@@ -2,9 +2,10 @@ namespace ACSParser.DataStructures;
 
 public struct ACSAUDIOINFO
 {
-    public ACSLOCATOR AudioData;
-    public ULONG Checksum;
+    public ACSLOCATOR AudioData; // 8 bytes
+    public ULONG Checksum; // 4 bytes
 
+    // TODO: Parse not tested.
     public static ACSAUDIOINFO Parse(BinaryReader reader)
     {
         ACSAUDIOINFO audioInfo = new ACSAUDIOINFO();
@@ -13,5 +14,18 @@ public struct ACSAUDIOINFO
         audioInfo.Checksum = reader.ULONG();
 
         return audioInfo;
+    }
+}
+
+public struct AUDIO
+{
+    // TODO: Parse not tested.
+    public static AUDIO Parse(BinaryReader reader)
+    {
+        AUDIO audio = new AUDIO();
+
+        // TODO: RIFF Audio
+
+        return audio;
     }
 }
