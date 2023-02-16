@@ -18,8 +18,8 @@ class Program
         //Parse(@"c:\Users\Administrator\Downloads\ACS\clippitMS\CLIPPIT_noballoon.acs");
         //Parse(@"c:\Users\Administrator\Downloads\ACS\clippitMS\CLIPPIT_novoice.acs");
         //Parse(@"c:\Users\Administrator\Downloads\ACS\clippitMS\CLIPPIT_voice.acs");
-        //Parse(@"/Users/wieslawsoltes/Documents/GitHub/Acdparser/clippitMS/CLIPPIT.ACS");
-        Parse(@"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS");
+        Parse(@"/Users/wieslawsoltes/Documents/GitHub/Acdparser/clippitMS/CLIPPIT.ACS");
+        //Parse(@"c:\Users\Administrator\Documents\GitHub\Acdparser\clippitMS\CLIPPIT.ACS");
     }
 
     private static void Parse(string acsFile)
@@ -55,8 +55,8 @@ class Program
             
             Console.WriteLine($"Position: {reader.BaseStream.Position}");
             Console.WriteLine($"Character Info Location: {header.CharacterInfo.Offset:X8} (size {header.CharacterInfo.Size} bytes)");
-            Util.PrintMemory(input, reader, header.CharacterInfo.Offset, 160, characterInfoStyles);
-            //Util.PrintMemory(input, reader, header.CharacterInfo, characterInfoStyles);
+            //Util.PrintMemory(input, reader, header.CharacterInfo.Offset, 160, characterInfoStyles);
+            Util.PrintMemory(input, reader, header.CharacterInfo, characterInfoStyles);
             Console.WriteLine("");
  
             
