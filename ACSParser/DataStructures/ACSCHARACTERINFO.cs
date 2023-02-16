@@ -34,6 +34,9 @@ public struct ACSCHARACTERINFO
         characterInfo.AnimationSetMajorVersion = reader.USHORT(); // 2 bytes
         characterInfo.AnimationSetMinorVersion = reader.USHORT(); // 2 bytes
 
+        //var flags = Convert.ToString(characterInfo.Flags, 2).PadLeft(32, '0');
+        //Console.WriteLine($"Flags: {flags}b 0x{characterInfo.Flags:X8}");
+
         if (characterInfo.IsVoiceOutputEnabled)
         {
             characterInfo.VoiceOutputInfo = VOICEINFO.Parse(reader);
@@ -57,17 +60,25 @@ public struct ACSCHARACTERINFO
         return characterInfo;
     }
 
-    public bool IsVoiceOutputEnabled => (Flags & 0x10) != 0;
+    private static bool IsBitSet(ULONG number, int bitPosition)
+    {
+        ULONG mask = (ULONG)1 << bitPosition;
+        return (number & mask) != 0;
+    }
 
-    public bool IsWordBalloonDisabled => (Flags & 0x100) != 0;
+    public bool IsVoiceOutputDisabled => IsBitSet(Flags, 4);
+    
+    public bool IsVoiceOutputEnabled => IsBitSet(Flags, 5);
 
-    public bool IsWordBalloonEnabled => (Flags & 0x200) != 0;
+    public bool IsWordBalloonDisabled => IsBitSet(Flags, 8);
 
-    public bool IsSizeToTextEnabled => (Flags & 0x10000) != 0;
+    public bool IsWordBalloonEnabled => IsBitSet(Flags, 9);
 
-    public bool IsAutoHideDisabled => (Flags & 0x20000) != 0;
+    public bool IsSizeToTextEnabled => IsBitSet(Flags, 16);
 
-    public bool IsAutoPaceDisabled => (Flags & 0x40000) != 0;
+    public bool IsAutoHideDisabled => IsBitSet(Flags, 17);
 
-    public bool IsStandardAnimationSetSupported => (Flags & 0x100000) != 0;
+    public bool IsAutoPaceDisabled => IsBitSet(Flags, 18);
+
+    public bool IsStandardAnimationSetSupported => IsBitSet(Flags, 20);
 }
