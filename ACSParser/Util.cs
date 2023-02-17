@@ -26,7 +26,7 @@ internal static class Util
         return (number & mask) != 0;
     }
 
-    public static void PrintMemory(FileStream input, BinaryReader reader, ULONG offset, ULONG size, List<Style>? styles = null)
+    public static void PrintMemory(Stream input, BinaryReader reader, ULONG offset, ULONG size, List<Style>? styles = null)
     {
         var currentOffset = input.Position;
         input.Seek(offset, SeekOrigin.Begin);
@@ -107,8 +107,54 @@ internal static class Util
         input.Seek(currentOffset, SeekOrigin.Begin);
     }
 
-    public static void PrintMemory(FileStream input, BinaryReader reader, ACSLOCATOR locator, List<Style>? styles = null)
+    public static void PrintMemory(Stream input, BinaryReader reader, ACSLOCATOR locator, List<Style>? styles = null)
     {
         PrintMemory(input, reader, locator.Offset, locator.Size, styles);
+    }
+
+    public static List<Style> CharacterInfoStyles()
+    {
+        var characterInfoStyles = new List<Style>();
+        // MinorVersion
+        ULONG start = 0;
+        ULONG end = 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Blue));
+        // MajorVersion
+        start = end;
+        end += 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Green));
+        // LocalizedInfo
+        start = end;
+        end += 8;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Cyan));
+        // UniqueId
+        start = end;
+        end += 16;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Magenta));
+        // CharacterWidth
+        start = end;
+        end += 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Blue));
+        // CharacterHeight
+        start = end;
+        end += 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Green));
+        // TransparentColorIndex
+        start = end;
+        end += 1;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Yellow));
+        // Flags
+        start = end;
+        end += 4;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Red));
+        // AnimationSetMajorVersion
+        start = end;
+        end += 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Blue));
+        // AnimationSetMinorVersion
+        start = end;
+        end += 2;
+        characterInfoStyles.Add(new(start, end, ConsoleColor.Green));
+        return characterInfoStyles;
     }
 }
