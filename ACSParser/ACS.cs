@@ -2,7 +2,7 @@ using ACSParser.DataStructures;
 
 namespace ACSParser;
 
-public struct ACS
+public class ACS
 {
     public ACSHEADER Header; // 36 bytes
     public ACSCHARACTERINFO CharacterInfo;
@@ -22,12 +22,12 @@ public struct ACS
         //
         // ACSHEADER
         //
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
         var header = ACSHEADER.Parse(reader);
         acs.Header = header;
-        Console.WriteLine($"Position: {stream.Position}");
-        Console.WriteLine("ACS File Header:");
-        Console.WriteLine("Signature: 0x{0:X8}", header.Signature);
+        // Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine("ACS File Header:");
+        // Console.WriteLine("Signature: 0x{0:X8}", header.Signature);
 
         //
         // Debug: ACSCHARACTERINFO
@@ -43,7 +43,7 @@ public struct ACS
         // Debug: ACSCHARACTERINFO
         //
         // Console.WriteLine($"Position: {stream.Position}");
-        Console.WriteLine($"Character Info Location: {header.CharacterInfo.Offset:X8} (size {header.CharacterInfo.Size} bytes)");
+        // Console.WriteLine($"Character Info Location: {header.CharacterInfo.Offset:X8} (size {header.CharacterInfo.Size} bytes)");
         // Util.PrintMemory(stream, reader, header.CharacterInfo.Offset, 160, characterInfoStyles);
         // Util.PrintMemory(stream, reader, header.CharacterInfo, characterInfoStyles);
         // Console.WriteLine("");
@@ -51,21 +51,21 @@ public struct ACS
         //
         // Read: ACSCHARACTERINFO
         //
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
         stream.Seek(header.CharacterInfo.Offset, SeekOrigin.Begin);
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
         var characterInfo = ACSCHARACTERINFO.Parse(reader);
         acs.CharacterInfo = characterInfo;
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
 
         //
         // Debug: ACSANIMATIONINFO[]
         //
-        Console.WriteLine($"Position: {stream.Position}");
-        Console.WriteLine($"Animation Info List Location: {header.AnimationInfoList.Offset:X8} (size {header.AnimationInfoList.Size} bytes)");
-        Util.PrintMemory(stream, reader, header.AnimationInfoList);
-        Console.WriteLine("");
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Animation Info List Location: {header.AnimationInfoList.Offset:X8} (size {header.AnimationInfoList.Size} bytes)");
+        //Util.PrintMemory(stream, reader, header.AnimationInfoList);
+        // Console.WriteLine("");
+        // Console.WriteLine($"Position: {stream.Position}");
 
         //
         // Read: ACSANIMATIONINFO[]
@@ -88,11 +88,11 @@ public struct ACS
         //
         // Debug: ACSIMAGEINFO[]
         //
-        Console.WriteLine($"Position: {stream.Position}");
-        Console.WriteLine($"Image Info List Location: {header.ImageInfoList.Offset:X8} (size {header.ImageInfoList.Size} bytes)");
-        Util.PrintMemory(stream, reader, header.ImageInfoList);
-        Console.WriteLine("");
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Image Info List Location: {header.ImageInfoList.Offset:X8} (size {header.ImageInfoList.Size} bytes)");
+        // Util.PrintMemory(stream, reader, header.ImageInfoList);
+        // Console.WriteLine("");
+        // Console.WriteLine($"Position: {stream.Position}");
 
         //
         // Read: ACSIMAGEINFO[]
@@ -115,11 +115,11 @@ public struct ACS
         //
         // Debug: ACSAUDIOINFO[]
         //
-        Console.WriteLine($"Position: {stream.Position}");
-        Console.WriteLine($"Audio Info List Location: {header.AudioInfoList.Offset:X8} (size {header.AudioInfoList.Size} bytes)");
-        Util.PrintMemory(stream, reader, header.AudioInfoList);
-        Console.WriteLine("");
-        Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Position: {stream.Position}");
+        // Console.WriteLine($"Audio Info List Location: {header.AudioInfoList.Offset:X8} (size {header.AudioInfoList.Size} bytes)");
+        // Util.PrintMemory(stream, reader, header.AudioInfoList);
+        // Console.WriteLine("");
+        // Console.WriteLine($"Position: {stream.Position}");
 
         //
         // Read: ACSAUDIOINFO[]
