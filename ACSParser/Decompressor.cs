@@ -77,6 +77,10 @@ public static class Decompressor
                     {
                         numOffsetSeqBits++;
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 bitPosition += numOffsetSeqBits < 3 ? numOffsetSeqBits + 1 : numOffsetSeqBits;
 
