@@ -36,8 +36,19 @@ public class IMAGE
         image.Unknown = reader.BYTE();
         image.Width = reader.USHORT();
         image.Height = reader.USHORT();
+
         image.IsImageDataCompressed = reader.BOOL();
         image.ImageData = DATABLOCK.Parse(reader);
+
+        if (image.IsImageDataCompressed != 0)
+        {
+            var decompressedDataSize =  ((image.Width + 3) & 0xFC) * image.Height;
+
+            var decompressed = Decompressor.Decompress(image.ImageData.Data, decompressedDataSize);
+
+            // TODO: ImageData is compressed.
+        }
+
         image.RegionData = COMPRESSED.Parse(reader);
 
         return image;
