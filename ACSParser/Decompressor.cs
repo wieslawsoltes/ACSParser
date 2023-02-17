@@ -46,7 +46,7 @@ public static class Decompressor
         var bitPosition = 0;
         var insertionPoint = 0;
 
-Debug(bits, 0, 7, "Header");
+//Debug(bits, 0, 7, "Header");
 
         // Header 0x00
         bitPosition += 8;
@@ -64,21 +64,19 @@ Debug(bits, 0, 7, "Header");
 
         while (bitPosition < bits.Length)
         {
-var startPosition = bitPosition;
+//var startPosition = bitPosition;
 
             var firstBitOfSequence = !bits[bitPosition];
             bitPosition += 1;
 
             if (firstBitOfSequence)
             {
-                Debug(bits, startPosition, bitPosition + 7, "Uncompressed");
+//Debug(bits, startPosition, bitPosition + 7, "Uncompressed");
 
                 // Uncompressed Byte
                 var data = GetByte(bits, bitPosition);
                 results[insertionPoint] = data;
-                // startBit + data = 9 bits
                 bitPosition += 8;
-                // data = 1 byte
                 insertionPoint += 1;
             }
             else
@@ -114,20 +112,17 @@ var startPosition = bitPosition;
                 // If the bit count is 20:
                 if (nextValueSizeInBits == 20 && byteOffsetInResult == 0x000FFFFF)
                 {
-Debug(bits, bitPosition, bitPosition + nextValueSizeInBits, "End of Stream");
+//Debug(bits, bitPosition, bitPosition + nextValueSizeInBits, "End of Stream");
                     bitPosition += nextValueSizeInBits;
-                    // the end of the bit stream has been reached
+                    // The end of the bit stream has been reached
                     break;
                 }
-//bitPosition += nextValueSizeInBits + 1;
-bitPosition += nextValueSizeInBits;
+
+                bitPosition += nextValueSizeInBits;
 //System.Diagnostics.Debug.WriteLine($"nextValueSizeInBits={nextValueSizeInBits}");
                 byteOffsetInResult += valueToAdd[nextValueSizeInBits];
 
                 // Following the offset bits, count the number of sequential bits which have a value of 1. The maximum number of bits is 11.
-
-                                    
-
 
                 var numDecodedByteSeqBits1 = 0;
                 var remainingBitsInLastSequence = 0;
@@ -170,35 +165,13 @@ bitPosition += nextValueSizeInBits;
                     bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits2);
                 }
 
-
-                
-
-
                 // Copy the BYTEs one at a time,
                 // incrementing the insertion point after each BYTE,
                 // as the copying may overlap past the original insertion point
 
-var endPosition = bitPosition - 1;
-Debug(bits, startPosition, endPosition, $"Compressed, Offset={byteOffsetInResult}, Bytes={bytesDecodedInSequence}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
-/*
-00000010000000000010000000001000
-00001011000010010000000101000010
-10110111000110011000000011101101
-11111111111111111111111
- 
-00000000 [0..7] Header
-000000100 [8..16] Uncompressed
-000000000 [17..25] Uncompressed
-100000000 [26..34] Compressed
-010000000 [35..43] Uncompressed
-10110000100 [44..54] Compressed
-10000000101 [55..65] Compressed
-000010101 [66..74] Uncompressed
-1011100011001 [75..87] Compressed
-100000001110110 [88..102] Compressed
-111111111111111111111111 [107..127] End of Stream
- */
-                
+//var endPosition = bitPosition - 1;
+//Debug(bits, startPosition, endPosition, $"Compressed, Offset={byteOffsetInResult}, Bytes={bytesDecodedInSequence}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
+
                 for (var i = 0; i < bytesDecodedInSequence; i++)
                 {
                     var sourcePoint = insertionPoint - byteOffsetInResult;
