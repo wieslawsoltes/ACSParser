@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSIMAGEINFO
+public class ACSIMAGEINFO
 {
     public ACSLOCATOR InfoLocation; // 8 bytes
     public ULONG Checksum; // 4 bytes
@@ -19,7 +19,7 @@ public struct ACSIMAGEINFO
     }
 }
 
-public struct IMAGE
+public class IMAGE
 {
     public BYTE Unknown; // 1 byte
     public USHORT Width; // 2 bytes

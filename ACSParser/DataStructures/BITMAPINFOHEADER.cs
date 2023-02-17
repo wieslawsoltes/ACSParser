@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct BITMAPINFOHEADER
+public class BITMAPINFOHEADER
 {
     public ULONG Size; // 4 bytes
     public LONG Width; // 4 bytes

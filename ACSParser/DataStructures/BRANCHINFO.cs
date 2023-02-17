@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct BRANCHINFO
+public class BRANCHINFO
 {
     public USHORT FrameIndex; // 2 bytes
     public USHORT Probability; // 2 bytes

@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct VOICEINFO
+public class VOICEINFO
 {
     public GUID TTS_EngineID; // 16 bytes
     public GUID TTS_ModeID; // 16 bytes

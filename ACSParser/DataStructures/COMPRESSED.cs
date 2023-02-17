@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct COMPRESSED
+public class COMPRESSED
 {
     public ULONG CompressedSize; // 4 bytes
     public ULONG UncompressedSize; // 4 bytes
@@ -20,8 +20,10 @@ public struct COMPRESSED
         }
         else
         {
+            var compressedData = reader.ReadBytes((int)compressed.CompressedSize);
+
             // TODO: Decompress. Data size is compressed.UncompressedSize after decompression.
-            compressed.Data = reader.ReadBytes((int)compressed.CompressedSize);
+            compressed.Data = compressedData;
         }
 
         return compressed;

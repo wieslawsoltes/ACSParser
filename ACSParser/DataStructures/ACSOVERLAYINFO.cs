@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSOVERLAYINFO
+public class ACSOVERLAYINFO
 {
     public BYTE OverlayType; // 1 byte
     public BOOL ReplaceTopImage; // 1 byte

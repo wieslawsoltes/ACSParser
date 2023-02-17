@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSHEADER
+public class ACSHEADER
 {
     public ULONG Signature; // 4 bytes
     public ACSLOCATOR CharacterInfo; // 8 bytes

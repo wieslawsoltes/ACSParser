@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSFRAMEINFO
+public class ACSFRAMEINFO
 {
     public ACSFRAMEIMAGE[] Images;
     public USHORT AudioIndex; // 2 bytes

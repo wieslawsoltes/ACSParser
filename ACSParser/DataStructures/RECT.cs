@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct RECT
+public class RECT
 {
     public LONG Left; // 4 bytes
     public LONG Top; // 4 bytes

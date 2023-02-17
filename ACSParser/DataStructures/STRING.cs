@@ -2,7 +2,7 @@
 
 namespace ACSParser.DataStructures;
 
-public struct STRING
+public class STRING
 {
     public ULONG Count; // 4 bytes
     public WCHAR[] Characters; // Characters.Length * 2 bytes

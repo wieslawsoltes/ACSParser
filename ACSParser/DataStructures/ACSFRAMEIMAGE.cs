@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSFRAMEIMAGE
+public class ACSFRAMEIMAGE
 {
     public ULONG ImageIndex; // 4 bytes
     public SHORT XOffset; // 2 bytes

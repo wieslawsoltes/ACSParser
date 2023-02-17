@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct RGNDATA
+public class RGNDATA
 {
     public RGNDATAHEADER Header;
     public RECT[] Rectangles;

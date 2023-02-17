@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ICONIMAGE
+public class ICONIMAGE
 {
     public BITMAPINFOHEADER IconHeader;
     public RGBQUAD[] ColorTable;

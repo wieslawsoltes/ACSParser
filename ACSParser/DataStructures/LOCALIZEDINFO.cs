@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct LOCALIZEDINFO
+public class LOCALIZEDINFO
 {
     public LANGID LanguageId; // 2 bytes
     public STRING CharacterName;

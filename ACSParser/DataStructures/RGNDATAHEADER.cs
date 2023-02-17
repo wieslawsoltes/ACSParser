@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct RGNDATAHEADER
+public class RGNDATAHEADER
 {
     public ULONG Size; // 4 bytes
     public ULONG Type; // 4 bytes

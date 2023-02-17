@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct PALETTECOLOR
+public class PALETTECOLOR
 {
     public RGBQUAD Color; // 4 bytes
 

@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSCHARACTERINFO
+public class ACSCHARACTERINFO
 {
     public USHORT MinorVersion; // 2 bytes
     public USHORT MajorVersion; // 2 bytes

@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSAUDIOINFO
+public class ACSAUDIOINFO
 {
     public ACSLOCATOR AudioData; // 8 bytes
     public ULONG Checksum; // 4 bytes
@@ -17,7 +17,7 @@ public struct ACSAUDIOINFO
     }
 }
 
-public struct AUDIO
+public class AUDIO
 {
     // TODO: Parse not tested.
     public static AUDIO Parse(BinaryReader reader)

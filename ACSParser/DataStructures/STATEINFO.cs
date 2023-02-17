@@ -1,6 +1,6 @@
 ﻿namespace ACSParser.DataStructures;
 
-public struct STATEINFO
+public class STATEINFO
 {
     public STRING StateName;
     public STRING[] Animations;

@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct BALLOONINFO
+public class BALLOONINFO
 {
     public BYTE NumTextLines; // 1 byte
     public BYTE CharsPerLine; // 1 byte

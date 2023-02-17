@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct DATABLOCK
+public class DATABLOCK
 {
     public ULONG Size; // 4 bytes
     public BYTE[] Data; // Data.Length * 1 byte

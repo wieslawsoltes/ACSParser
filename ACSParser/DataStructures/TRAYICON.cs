@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct TRAYICON
+public class TRAYICON
 {
     public ULONG MonochromeBitmapSize; // 4 bytes
     public ICONIMAGE MonochromeBitmap;

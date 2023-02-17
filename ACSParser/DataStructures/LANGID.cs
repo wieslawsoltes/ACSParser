@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct LANGID
+public class LANGID
 {
     public USHORT LanguageID; // 2 bytes
 

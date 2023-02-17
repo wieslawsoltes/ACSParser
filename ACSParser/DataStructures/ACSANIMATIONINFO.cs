@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public struct ACSANIMATIONINFO
+public class ACSANIMATIONINFO
 {
     public STRING AnimationName;
     public ACSLOCATOR AnimationLocator; // 8 bytes
@@ -17,7 +17,7 @@ public struct ACSANIMATIONINFO
     }
 }
 
-public struct ANIMATION
+public class ANIMATION
 {
     public STRING AnimationName;
     public BYTE TransitionType; // 1 byte

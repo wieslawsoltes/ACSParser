@@ -1,6 +1,6 @@
 ﻿namespace ACSParser.DataStructures;
 
-public struct GUID
+public class GUID
 {
     public ULONG Data1; // 4 bytes
     public USHORT Data2; // 2 bytes

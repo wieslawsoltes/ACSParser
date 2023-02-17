@@ -1,6 +1,6 @@
 ﻿namespace ACSParser.DataStructures;
 
-public struct ACSLOCATOR
+public class ACSLOCATOR
 {
     public ULONG Offset; // 4 bytes
     public ULONG Size; // 4 bytes
