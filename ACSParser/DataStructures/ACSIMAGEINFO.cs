@@ -42,11 +42,9 @@ public class IMAGE
 
         if (image.IsImageDataCompressed != 0)
         {
-            var decompressedDataSize =  ((image.Width + 3) & 0xFC) * image.Height;
-
-            var decompressed = Decompressor.Decompress(image.ImageData.Data, decompressedDataSize);
-
             // TODO: ImageData is compressed.
+            // var decompressedDataSize =  ((image.Width + 3) & 0xFC) * image.Height;
+            // var decompressed = Decompressor.Decompress(image.ImageData.Data, decompressedDataSize);
         }
 
         image.RegionData = COMPRESSED.Parse(reader);
