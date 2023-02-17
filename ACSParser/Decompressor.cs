@@ -29,6 +29,16 @@ public static class Decompressor
         return BitConverter.ToInt32(bytes, 0);
     }
 
+    private static int GetValueFromBitCount(int bitCount)
+    {
+        var value = 0;
+        for (var i = 0; i < bitCount; i++) 
+        {
+            value = (value << 1) | 1;
+        }
+        return value;
+    }
+
     public static byte[] Decompress(byte[] compressedData, int decompressedDataSize)
     {
         var results = new byte[decompressedDataSize];
@@ -41,9 +51,6 @@ Debug(bits, 0, 7, "Header");
         // Header 0x00
         bitPosition += 8;
 
-        // Data Length = Length - Header + Footer
-        var dataLength = bits.Length - 8 + 6 * 8; 
-
         var nextValueSizeBits = new []
         {
             6, 9, 12, 20
@@ -55,7 +62,7 @@ Debug(bits, 0, 7, "Header");
         };
 
 
-        while (bitPosition < dataLength)
+        while (bitPosition < bits.Length)
         {
 var startPosition = bitPosition;
 
@@ -119,7 +126,10 @@ bitPosition += nextValueSizeInBits;
 
                 // Following the offset bits, count the number of sequential bits which have a value of 1. The maximum number of bits is 11.
 
-                var numDecodedByteSeqBits = 0;
+                                    
+
+
+                var numDecodedByteSeqBits1 = 0;
                 var remainingBitsInLastSequence = 0;
                 var sequenceCount = 0;
                 for (; sequenceCount < 11; sequenceCount++)
@@ -127,7 +137,7 @@ bitPosition += nextValueSizeInBits;
 //System.Diagnostics.Debug.WriteLine($"{bitPosition }={(bits[bitPosition] ? '1' : '0')}");
                     if (bits[bitPosition])
                     {
-                        numDecodedByteSeqBits++;
+                        numDecodedByteSeqBits1++;
                         remainingBitsInLastSequence++;
                         bitPosition += 1;
                     }
@@ -138,6 +148,8 @@ bitPosition += nextValueSizeInBits;
                     }
                 }
 
+                bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits1);
+
                 if (sequenceCount == 10 && bits[bitPosition])
                 {
                     throw new Exception("Error invalid sequence");
@@ -145,23 +157,22 @@ bitPosition += nextValueSizeInBits;
 
                 if (remainingBitsInLastSequence > 0)
                 {
+                    var numDecodedByteSeqBits2 = 0;
                     for (var i = 0; i < remainingBitsInLastSequence; i++)
                     {
                         if (bits[bitPosition])
                         {
-                            numDecodedByteSeqBits++;
+                            numDecodedByteSeqBits2++;
                         }
                         bitPosition += 1;
                     }
+
+                    bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits2);
                 }
 
-                int value = 0;
-                for (var i = 0; i < numDecodedByteSeqBits; i++) 
-                {
-                    value = (value << 1) | 1;
-                }
 
-                bytesDecodedInSequence += value;
+                
+
 
                 // Copy the BYTEs one at a time,
                 // incrementing the insertion point after each BYTE,
@@ -180,12 +191,12 @@ Debug(bits, startPosition, endPosition, $"Compressed, Offset={byteOffsetInResult
 000000000 [17..25] Uncompressed
 100000000 [26..34] Compressed
 010000000 [35..43] Uncompressed
-10110000100 [44..54]
-10000000101 [55..
-000010101
-1011100011001
-100000001110110
-111111111111111111111111 End of stream
+10110000100 [44..54] Compressed
+10000000101 [55..65] Compressed
+000010101 [66..74] Uncompressed
+1011100011001 [75..87] Compressed
+100000001110110 [88..102] Compressed
+111111111111111111111111 [107..127] End of Stream
  */
                 
                 for (var i = 0; i < bytesDecodedInSequence; i++)
@@ -201,14 +212,6 @@ Debug(bits, startPosition, endPosition, $"Compressed, Offset={byteOffsetInResult
             }
         }
 
-        // Footer 0xFF
-        // bitPosition += 6 * 8;
-
-        if (bitPosition != bits.Length)
-        {
-            throw new Exception("Invalid data length");
-        }
-        
         return results;
     }
 
