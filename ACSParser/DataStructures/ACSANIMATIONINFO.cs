@@ -15,6 +15,12 @@ public class ACSANIMATIONINFO
 
         return animation;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        AnimationName.Write(writer);
+        AnimationLocator.Write(writer);
+    }
 }
 
 public class ANIMATION
@@ -41,5 +47,18 @@ public class ANIMATION
         }
 
         return animation;
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        AnimationName.Write(writer);
+        writer.Write(TransitionType);
+        ReturnAnimation.Write(writer);
+
+        writer.Write((USHORT)AnimationFrames.Length);
+        for (var i = 0; i < AnimationFrames.Length; i++)
+        {
+            AnimationFrames[i].Write(writer);
+        }
     }
 }
