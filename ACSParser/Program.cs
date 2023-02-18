@@ -51,18 +51,22 @@ class Program
                 
                 //  The Image Data has 1 Plane and a Bit Count of 8, and does not use any pixel compression.
 
-                // TODO: BMP header
+                // BITMAPFILEHEADER + BITMAPINFOHEADER
+                ULONG offBits = 14 + 40 + (ULONG)acs.CharacterInfo.ColorTable.Length;
+                ULONG size = offBits + (ULONG)decompressed.Length;
+
+                // BMP header
                 var fileHeader = new BITMAPFILEHEADER
                 {
                     Type = 0x424D,
-                    Size = 0, // TODO:
+                    Size = size, // TODO:
                     Reserved1 = 0,
                     Reserved2 = 0,
-                    OffBits = 0, // TODO:
+                    OffBits = offBits, // TODO:
                 };
                 fileHeader.Write(binaryWriter);
 
-                // TODO: BMP info header
+                // BMP info header
                 var infoHeader = new BITMAPINFOHEADER
                 {
                     Size = 40,
@@ -79,12 +83,14 @@ class Program
                 };
                 infoHeader.Write(binaryWriter);
 
+                // BMP color table
                 var colorTable = acs.CharacterInfo.ColorTable;
                 foreach (var paletteColor in colorTable)
                 {
                     paletteColor.Color.Write(binaryWriter);
                 }
 
+                // BMP bytes
                 binaryWriter.Write(decompressed);
             }
 
