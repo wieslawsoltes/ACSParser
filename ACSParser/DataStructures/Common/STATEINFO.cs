@@ -40,6 +40,7 @@ public class STATEINFO
     {
         StateName.Write(writer);
 
+        writer.Write((USHORT)Animations.Length);
         for (var i = 0; i < Animations.Length; i++)
         {
             Animations[i].Write(writer);
