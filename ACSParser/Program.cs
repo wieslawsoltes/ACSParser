@@ -55,51 +55,34 @@ class Program
                 var fileHeader = new BITMAPFILEHEADER
                 {
                     Type = 0x424D,
-                    Size = 0,
+                    Size = 0, // TODO:
                     Reserved1 = 0,
                     Reserved2 = 0,
-                    OffBits = 0,
+                    OffBits = 0, // TODO:
                 };
-                binaryWriter.Write(fileHeader.Type);
-                binaryWriter.Write(fileHeader.Size);
-                binaryWriter.Write(fileHeader.Reserved1);
-                binaryWriter.Write(fileHeader.Reserved2);
-                binaryWriter.Write(fileHeader.OffBits);
+                fileHeader.Write(binaryWriter);
 
                 // TODO: BMP info header
                 var infoHeader = new BITMAPINFOHEADER
                 {
-                    Size = 0,
-                    Width = 0,
-                    Height = 0,
-                    Planes = 0,
-                    BitCount = 0,
-                    Compression = 0,
-                    SizeImage = 0,
-                    XPelsPerMeter = 0,
-                    YPelsPerMeter = 0,
+                    Size = 40,
+                    Width = image.Width,
+                    Height = image.Height,
+                    Planes = 1,
+                    BitCount = 8,
+                    Compression = (ULONG)Compression.BI_RGB,
+                    SizeImage = 0, // For BI_RGB it can be zero.
+                    XPelsPerMeter = 0, // TODO:
+                    YPelsPerMeter = 0, // TODO:
                     ClrUsed = 0,
                     ClrImportant = 0
                 };
-                binaryWriter.Write(infoHeader.Size);
-                binaryWriter.Write(infoHeader.Width);
-                binaryWriter.Write(infoHeader.Height);
-                binaryWriter.Write(infoHeader.Planes);
-                binaryWriter.Write(infoHeader.BitCount);
-                binaryWriter.Write(infoHeader.Compression);
-                binaryWriter.Write(infoHeader.SizeImage);
-                binaryWriter.Write(infoHeader.XPelsPerMeter);
-                binaryWriter.Write(infoHeader.YPelsPerMeter);
-                binaryWriter.Write(infoHeader.ClrUsed);
-                binaryWriter.Write(infoHeader.ClrImportant);
+                infoHeader.Write(binaryWriter);
 
                 var colorTable = acs.CharacterInfo.ColorTable;
                 foreach (var paletteColor in colorTable)
                 {
-                    binaryWriter.Write(paletteColor.Color.Red);
-                    binaryWriter.Write(paletteColor.Color.Green);
-                    binaryWriter.Write(paletteColor.Color.Blue);
-                    binaryWriter.Write(paletteColor.Color.Reserved);
+                    paletteColor.Color.Write(binaryWriter);
                 }
 
                 binaryWriter.Write(decompressed);
