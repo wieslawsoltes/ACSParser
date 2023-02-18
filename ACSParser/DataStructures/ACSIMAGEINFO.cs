@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public class ACSIMAGEINFO
+public class ACSIMAGEINFO // 12 bytes
 {
     public ACSLOCATOR InfoLocation; // 8 bytes
     public ULONG Checksum; // 4 bytes
@@ -13,9 +13,13 @@ public class ACSIMAGEINFO
         imageInfo.InfoLocation = ACSLOCATOR.Parse(reader);
         imageInfo.Checksum = reader.ULONG();
 
-        // TODO: Read IMAGE from InfoLocation.
-        
         return imageInfo;
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        InfoLocation.Write(writer);
+        writer.Write(Checksum);
     }
 }
 
@@ -50,5 +54,15 @@ public class IMAGE
         image.RegionData = COMPRESSED.Parse(reader);
 
         return image;
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Unknown);
+        writer.Write(Width);
+        writer.Write(Height);
+        writer.Write(IsImageDataCompressed);
+        ImageData.Write(writer);
+        RegionData.Write(writer);
     }
 }
