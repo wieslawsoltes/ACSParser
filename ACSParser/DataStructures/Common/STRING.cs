@@ -28,6 +28,21 @@ public class STRING
         return str;
     }
 
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Count);
+
+        for (var i = 0; i < Characters.Length; i++)
+        {
+            writer.Write(Characters[i]);
+        }
+
+        if (Count > 0)
+        {
+            writer.Write((WCHAR)0x0000);
+        }
+    }
+
     public string AsString()
     {
         byte[] byteArray = new byte[Characters.Length * sizeof(short)];
