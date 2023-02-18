@@ -21,4 +21,13 @@ public class BITMAPFILEHEADER
 
         return header;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Type);
+        writer.Write(Size);
+        writer.Write(Reserved1);
+        writer.Write(Reserved2);
+        writer.Write(OffBits);
+    }
 }
