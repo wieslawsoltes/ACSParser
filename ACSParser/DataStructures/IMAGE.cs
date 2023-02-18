@@ -50,8 +50,8 @@ public class IMAGE
 
         using var writer = new BinaryWriter(stream);
 
-        // OffBits = BITMAPFILEHEADER + BITMAPINFOHEADER + Color Table
-        ULONG offBits = 14 + 40 + (ULONG)colorTable.Length;
+        // OffBits = BITMAPFILEHEADER + BITMAPINFOHEADER + colorTable.Length * 4
+        ULONG offBits = 14 + 40 + (ULONG)(colorTable.Length * 4);
         ULONG size = offBits + (ULONG)decompressed.Length;
 
         // BMP header
