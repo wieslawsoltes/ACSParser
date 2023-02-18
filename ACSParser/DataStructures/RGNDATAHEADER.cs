@@ -21,4 +21,13 @@ public class RGNDATAHEADER
 
         return rgndataheader;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Size);
+        writer.Write(Type);
+        writer.Write(Count);
+        writer.Write(RgnSize);
+        Bound.Write(writer);
+    }
 }
