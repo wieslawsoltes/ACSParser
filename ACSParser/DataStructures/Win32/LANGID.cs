@@ -13,4 +13,9 @@ public class LANGID
 
         return langid;
     }
+    
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(LanguageID);
+    }
 }
