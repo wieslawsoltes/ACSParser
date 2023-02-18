@@ -23,4 +23,16 @@ public class GUID
 
         return guid;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Data1);
+        writer.Write(Data2);
+        writer.Write(Data3);
+
+        for (var i = 0; i < Data4.Length; i++)
+        {
+            writer.Write(Data4[i]);
+        }
+    }
 }
