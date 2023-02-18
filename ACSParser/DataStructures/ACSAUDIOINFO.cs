@@ -15,6 +15,12 @@ public class ACSAUDIOINFO
 
         return audioInfo;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        AudioData.Write(writer);
+        writer.Write(Checksum);
+    }
 }
 
 public class AUDIO
@@ -27,5 +33,10 @@ public class AUDIO
         // TODO: RIFF Audio
 
         return audio;
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        // TODO: RIFF Audio
     }
 }
