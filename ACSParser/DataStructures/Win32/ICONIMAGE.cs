@@ -15,7 +15,7 @@ public class ICONIMAGE
         iconImage.IconHeader = BITMAPINFOHEADER.Parse(reader);
 
         // TODO:
-        var numColors = GetNumColors(iconImage.IconHeader);
+        var numColors = iconImage.IconHeader.GetNumColors();
         iconImage.ColorTable = new RGBQUAD[numColors];
         for (var i = 0; i < numColors; i++)
         {
@@ -31,18 +31,6 @@ public class ICONIMAGE
         iconImage.ANDMaskBits = reader.ReadBytes(andMaskSize);
 
         return iconImage;
-    }
-
-    private static int GetNumColors(BITMAPINFOHEADER iconHeader)
-    {
-        var numColors = 0;
-
-        if (iconHeader.BitCount <= 8)
-        {
-            numColors = 1 << iconHeader.BitCount;
-        }
-
-        return numColors;
     }
 
     private static int GetXORMaskSize(ref BITMAPINFOHEADER iconHeader)
