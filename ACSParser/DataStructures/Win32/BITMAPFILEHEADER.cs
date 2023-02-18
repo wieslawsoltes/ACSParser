@@ -1,12 +1,12 @@
 namespace ACSParser.DataStructures;
 
-public class BITMAPFILEHEADER
+public class BITMAPFILEHEADER // 14 bytes
 {
-    public USHORT Type;
-    public ULONG Size;
-    public USHORT Reserved1;
-    public USHORT Reserved2;
-    public ULONG OffBits;
+    public USHORT Type; // 2 bytes
+    public ULONG Size; // 4 bytes
+    public USHORT Reserved1; // 2 bytes
+    public USHORT Reserved2; // 2 bytes
+    public ULONG OffBits; // 4 bytes
 
     // TODO: Parse not tested.
     public static BITMAPFILEHEADER Parse(BinaryReader reader)
