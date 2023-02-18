@@ -18,4 +18,12 @@ public class RGBQUAD
 
         return rgbquad;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Red);
+        writer.Write(Green);
+        writer.Write(Blue);
+        writer.Write(Reserved);
+    }
 }
