@@ -14,4 +14,10 @@ public class ACSLOCATOR
 
         return locator;
     }
+    
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Offset);
+        writer.Write(Size);
+    }
 }
