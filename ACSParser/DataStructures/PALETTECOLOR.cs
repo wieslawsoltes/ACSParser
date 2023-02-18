@@ -25,4 +25,9 @@ public class PALETTECOLOR
 
         return palletColor;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        Color.Write(writer);
+    }
 }
