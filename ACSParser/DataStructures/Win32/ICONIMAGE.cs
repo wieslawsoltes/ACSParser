@@ -8,7 +8,7 @@ public class ICONIMAGE
     public BYTE[] ANDMaskBits;
 
     // TODO: Parse not tested.
-     public static ICONIMAGE Parse(BinaryReader reader)
+    public static ICONIMAGE Parse(BinaryReader reader)
     {
         ICONIMAGE iconImage = new ICONIMAGE();
 
@@ -66,5 +66,25 @@ public class ICONIMAGE
         var andMaskSize = iconHeader.Width * iconHeader.Height / 8;
         andMaskSize = (andMaskSize + 3) & ~3;
         return andMaskSize;
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        IconHeader.Write(writer);
+
+        for (var i = 0; i < ColorTable.Length; i++)
+        {
+            ColorTable[i].Write(writer);
+        }
+
+        for (var i = 0; i < XORMaskBits.Length; i++)
+        {
+            writer.Write(XORMaskBits[i]);
+        }
+
+        for (var i = 0; i < ANDMaskBits.Length; i++)
+        {
+            writer.Write(ANDMaskBits[i]);
+        }
     }
 }
