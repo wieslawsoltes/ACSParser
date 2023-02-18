@@ -48,4 +48,22 @@ public class ACSOVERLAYINFO
 
         return overlayInfo;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(OverlayType);
+        writer.Write(ReplaceTopImage);
+        writer.Write(ImageIndex);
+        writer.Write(Unknown);
+        writer.Write(RegionDataPresent);
+        writer.Write(XOffset);
+        writer.Write(YOffset);
+        writer.Write(Width);
+        writer.Write(Height);
+
+        if (RegionDataPresent != 0x00)
+        {
+            RegionData.Write(writer);
+        }
+    }
 }
