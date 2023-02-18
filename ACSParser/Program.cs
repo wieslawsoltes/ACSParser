@@ -58,7 +58,7 @@ class Program
                 // BMP header
                 var fileHeader = new BITMAPFILEHEADER
                 {
-                    Type = 0x424D,
+                    Type = 0x4D42,
                     Size = size, // TODO:
                     Reserved1 = 0,
                     Reserved2 = 0,
