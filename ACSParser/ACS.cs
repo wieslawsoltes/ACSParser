@@ -141,4 +141,13 @@ public class ACS
 
         return acs;
     }
+
+    public void Write(Stream stream)
+    {
+        using var writer = new BinaryWriter(stream);
+
+        Header.Write(writer);
+
+        // TODO;
+    }
 }
