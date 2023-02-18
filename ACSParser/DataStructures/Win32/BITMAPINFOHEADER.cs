@@ -47,6 +47,18 @@ public class BITMAPINFOHEADER
         return header;
     }
 
+    public int GetNumColors()
+    {
+        var numColors = 0;
+
+        if (BitCount <= 8)
+        {
+            numColors = 1 << BitCount;
+        }
+
+        return numColors;
+    }
+
     public void Write(BinaryWriter writer)
     {
         writer.Write(Size);
