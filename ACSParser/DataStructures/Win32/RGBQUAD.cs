@@ -1,6 +1,6 @@
 namespace ACSParser.DataStructures;
 
-public class RGBQUAD
+public class RGBQUAD // 4 bytes
 {
     public BYTE Red; // 1 byte
     public BYTE Green; // 1 byte
