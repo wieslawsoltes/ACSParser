@@ -19,4 +19,12 @@ public class RECT
 
         return rect;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Left);
+        writer.Write(Top);
+        writer.Write(Right);
+        writer.Write(Bottom);
+    }
 }
