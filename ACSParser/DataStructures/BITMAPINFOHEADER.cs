@@ -46,4 +46,19 @@ public class BITMAPINFOHEADER
 
         return header;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Size);
+        writer.Write(Width);
+        writer.Write(Height);
+        writer.Write(Planes);
+        writer.Write(BitCount);
+        writer.Write(Compression);
+        writer.Write(SizeImage);
+        writer.Write(XPelsPerMeter);
+        writer.Write(YPelsPerMeter);
+        writer.Write(ClrUsed);
+        writer.Write(ClrImportant); 
+    }
 }
