@@ -26,4 +26,14 @@ public class RGNDATA
 
         return data;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        Header.Write(writer);
+
+        for (var i = 0; i < Rectangles.Length; i++)
+        {
+            Rectangles[i].Write(writer);
+        }
+    }
 }
