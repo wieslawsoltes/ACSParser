@@ -25,4 +25,13 @@ public class ACSHEADER
 
         return header;
     }
+  
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Signature);
+        CharacterInfo.Write(writer);
+        AnimationInfoList.Write(writer);
+        ImageInfoList.Write(writer);
+        AudioInfoList.Write(writer);
+    }
 }
