@@ -22,4 +22,12 @@ public class TRAYICON
 
         return trayIcon;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(MonochromeBitmapSize);
+        MonochromeBitmap.Write(writer);
+        writer.Write(ColorBitmapSize);
+        ColorBitmap.Write(writer);
+    }
 }

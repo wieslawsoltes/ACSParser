@@ -35,4 +35,22 @@ public class VOICEINFO
 
         return info;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        TTS_EngineID.Write(writer);
+        TTS_ModeID.Write(writer);
+        writer.Write(Speed);
+        writer.Write(Pitch);
+        writer.Write(ExtraDataPresent);
+
+        if (ExtraDataPresent != 0x00)
+        {
+            LanguageID.Write(writer);
+            LanguageDialect.Write(writer);
+            writer.Write(Gender);
+            writer.Write(Age);
+            Style.Write(writer);
+        }
+    }
 }

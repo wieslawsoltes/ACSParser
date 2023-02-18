@@ -15,4 +15,14 @@ public class DATABLOCK
 
         return datablock;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(Size);
+
+        for (var i = 0; i < Data.Length; i++)
+        {
+            writer.Write(Data[i]);
+        }
+    }
 }

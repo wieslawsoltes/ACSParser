@@ -32,4 +32,12 @@ public class LOCALIZEDINFO
 
         return localizedInfo;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        LanguageId.Write(writer);
+        CharacterName.Write(writer);
+        CharacterDescription.Write(writer);
+        CharacterExtraData.Write(writer);
+    }
 }

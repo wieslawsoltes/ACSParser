@@ -15,4 +15,9 @@ public class BRANCHINFO
 
         return branch;
     }
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(FrameIndex);
+        writer.Write(Probability);
+    }
 }

@@ -31,4 +31,18 @@ public class BALLOONINFO
 
         return info;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(NumTextLines);
+        writer.Write(CharsPerLine);
+        ForegroundColor.Write(writer);
+        BackgroundColor.Write(writer);
+        BorderColor.Write(writer);
+        FontName.Write(writer);
+        writer.Write(FontHeight);
+        writer.Write(FontWeight);
+        writer.Write(Italicized);
+        writer.Write(Unknown);
+    }
 }

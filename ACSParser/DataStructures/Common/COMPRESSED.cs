@@ -28,4 +28,15 @@ public class COMPRESSED
 
         return compressed;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(CompressedSize);
+        writer.Write(UncompressedSize);
+
+        for (var i = 0; i < Data.Length; i++)
+        {
+            writer.Write(Data[i]);
+        }
+    }
 }

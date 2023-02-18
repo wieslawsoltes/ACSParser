@@ -35,4 +35,14 @@ public class STATEINFO
 
         return stateInfo;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        StateName.Write(writer);
+
+        for (var i = 0; i < Animations.Length; i++)
+        {
+            Animations[i].Write(writer);
+        }
+    }
 }
