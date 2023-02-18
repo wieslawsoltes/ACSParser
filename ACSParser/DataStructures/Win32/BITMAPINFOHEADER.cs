@@ -13,7 +13,7 @@ public enum Compression : ULONG
     BI_CMYKRLE4 = 0x000D
 }
 
-public class BITMAPINFOHEADER
+public class BITMAPINFOHEADER // 40 bytes
 {
     public ULONG Size; // 4 bytes
     public LONG Width; // 4 bytes
