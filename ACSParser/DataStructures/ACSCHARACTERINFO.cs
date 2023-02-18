@@ -76,4 +76,9 @@ public class ACSCHARACTERINFO
     public bool IsAutoPaceDisabled => Util.IsBitSet(Flags, 18);
 
     public bool IsStandardAnimationSetSupported => Util.IsBitSet(Flags, 20);
+
+    public void Write(BinaryWriter writer)
+    {
+        // TODO:
+    }
 }
