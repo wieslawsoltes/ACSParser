@@ -48,7 +48,7 @@ public class ACSFRAMEINFO
         {
             Images[i].Write(writer);
         }
-        
+
         writer.Write(AudioIndex);
         writer.Write(Duration);
         writer.Write(ExitFrameIndex);
