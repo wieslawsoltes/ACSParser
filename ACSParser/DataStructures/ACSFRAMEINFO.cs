@@ -41,4 +41,26 @@ public class ACSFRAMEINFO
 
         return frame;
     }
+
+    public void Write(BinaryWriter writer)
+    {
+        for (var i = 0; i < Images.Length; i++)
+        {
+            Images[i].Write(writer);
+        }
+        
+        writer.Write(AudioIndex);
+        writer.Write(Duration);
+        writer.Write(ExitFrameIndex);
+
+        for (var i = 0; i < Branches.Length; i++)
+        {
+            Branches[i].Write(writer);
+        }
+
+        for (var i = 0; i < Overlays.Length; i++)
+        {
+            Overlays[i].Write(writer);
+        }
+    }
 }
