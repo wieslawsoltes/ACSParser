@@ -153,10 +153,10 @@ public static class Decompressor
                 bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits1);
 
                 // TODO:
-                // if (sequenceCount >= 10)
-                // {
-                //     remainingBitsInLastSequence = 0;
-                // }
+                if (numDecodedByteSeqBits1 == 11)
+                {
+                    remainingBitsInLastSequence = 0;
+                }
 
                 if (remainingBitsInLastSequence > 0)
                 {
@@ -177,7 +177,7 @@ public static class Decompressor
                         var endPosition = bitPosition - 1;
                         Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
 #endif
-                        throw new Exception($"Invalid offset insertionPoint={insertionPoint}, byteOffsetInResult={byteOffsetInResult}.");
+                        throw new Exception($"Invalid offset insertionPoint={insertionPoint}, byteOffsetInResult={byteOffsetInResult}, numDecodedByteSeqBits1={numDecodedByteSeqBits1}, remainingBitsInLastSequence={remainingBitsInLastSequence}.");
                     }
                     results[insertionPoint] = results[sourcePoint];
                     insertionPoint += 1;
