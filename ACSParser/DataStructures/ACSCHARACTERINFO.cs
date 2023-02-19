@@ -61,6 +61,49 @@ public class ACSCHARACTERINFO
         return characterInfo;
     }
 
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write(MinorVersion);
+        writer.Write(MajorVersion);
+        LocalizedInfo.Write(writer);
+        UniqueId.Write(writer);
+        writer.Write(CharacterWidth);
+        writer.Write(CharacterHeight);
+        writer.Write(TransparentColorIndex);
+
+        writer.Write(Flags);
+
+        writer.Write(AnimationSetMajorVersion);
+        writer.Write(AnimationSetMinorVersion);
+
+        if (IsVoiceOutputEnabled)
+        {
+            VoiceOutputInfo.Write(writer);
+        }
+
+        if (IsWordBalloonEnabled)
+        {
+            BalloonInfo.Write(writer);
+        }
+        
+        for (var i = 0; i < ColorTable.Length; i++)
+        {
+            ColorTable[i].Write(writer);
+        }
+
+        writer.Write(IsSystemTrayIconEnabled);
+
+        if (IsSystemTrayIconEnabled != 0x00)
+        {
+            SystemTrayIcon.Write(writer);
+        }
+
+        for (var i = 0; i < AnimationStates.Length; i++)
+        {
+            AnimationStates[i].Write(writer);
+        }
+    }
+
     public bool IsVoiceOutputDisabled => Util.IsBitSet(Flags, 4);
 
     public bool IsVoiceOutputEnabled => Util.IsBitSet(Flags, 5);
@@ -76,9 +119,4 @@ public class ACSCHARACTERINFO
     public bool IsAutoPaceDisabled => Util.IsBitSet(Flags, 18);
 
     public bool IsStandardAnimationSetSupported => Util.IsBitSet(Flags, 20);
-
-    public void Write(BinaryWriter writer)
-    {
-        // TODO:
-    }
 }
