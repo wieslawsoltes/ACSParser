@@ -153,17 +153,8 @@ public static class Decompressor
 
                 if (remainingBitsInLastSequence > 0)
                 {
-                    var numDecodedByteSeqBits2 = 0;
-                    for (var i = 0; i < remainingBitsInLastSequence; i++)
-                    {
-                        if (bits[bitPosition])
-                        {
-                            numDecodedByteSeqBits2++;
-                        }
-                        bitPosition += 1;
-                    }
-
-                    bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits2);
+                    bytesDecodedInSequence += GetInt32(bits, bitPosition, remainingBitsInLastSequence);
+                    bitPosition += remainingBitsInLastSequence;
                 }
 
                 // Copy the BYTEs one at a time,
