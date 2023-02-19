@@ -40,6 +40,7 @@ class Program
             {
                 var image = acs.Images[i];
                 var name = i.ToString().PadLeft(4, '0') + ".bmp";
+                Console.WriteLine(name);
                 using var bitmapStream = File.Create(name);
                 image.SaveBitmap(bitmapStream, acs.CharacterInfo.ColorTable);
             }
