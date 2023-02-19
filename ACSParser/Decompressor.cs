@@ -148,7 +148,7 @@ public static class Decompressor
 
                 if (sequenceCount == 10 && bits[bitPosition])
                 {
-                    throw new Exception("Error invalid sequence");
+                    throw new Exception("Invalid sequence.");
                 }
 
                 if (remainingBitsInLastSequence > 0)
