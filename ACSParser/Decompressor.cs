@@ -122,7 +122,8 @@ public static class Decompressor
 //System.Diagnostics.Debug.WriteLine($"nextValueSizeInBits={nextValueSizeInBits}");
                 byteOffsetInResult += valueToAdd[nextValueSizeInBits];
 
-                // Following the offset bits, count the number of sequential bits which have a value of 1. The maximum number of bits is 11.
+                // Following the offset bits, count the number of sequential bits which have a value of 1.
+                // The maximum number of bits is 11.
 
                 var numDecodedByteSeqBits1 = 0;
                 var remainingBitsInLastSequence = 0;
