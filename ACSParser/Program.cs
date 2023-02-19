@@ -50,6 +50,7 @@ class Program
         catch (Exception ex)
         {
             Console.WriteLine("Error: {0}", ex.Message);
+            Console.WriteLine("Error: {0}", ex.StackTrace);
         }
     }
 }
