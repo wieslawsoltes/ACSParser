@@ -133,6 +133,15 @@ public static class Decompressor
                         numDecodedByteSeqBits1++;
                         remainingBitsInLastSequence++;
                         bitPosition += 1;
+
+                        if (sequenceCount == 10 && bits[bitPosition])
+                        {
+#if DEBUG
+                            var endPosition = bitPosition;
+                            Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
+#endif
+                            throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
+                        }
                     }
                     else
                     {
@@ -143,19 +152,11 @@ public static class Decompressor
 
                 bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits1);
 
-                if (sequenceCount == 10 && bits[bitPosition - 1])
-                {
-#if DEBUG
-                    var endPosition = bitPosition;
-                    Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
-#endif
-                    throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
-                }
-
-                if (sequenceCount == 10)
-                {
-                    remainingBitsInLastSequence = 0;
-                }
+                // TODO:
+                // if (sequenceCount >= 10)
+                // {
+                //     remainingBitsInLastSequence = 0;
+                // }
 
                 if (remainingBitsInLastSequence > 0)
                 {
@@ -170,7 +171,7 @@ public static class Decompressor
                 for (var i = 0; i < bytesDecodedInSequence; i++)
                 {
                     var sourcePoint = insertionPoint - byteOffsetInResult;
-                    if (sourcePoint > results.Length - 1 || sourcePoint < 0)
+                    if (sourcePoint > results.Length - 1 || sourcePoint < 0 || insertionPoint > results.Length - 1)
                     {
 #if DEBUG
                         var endPosition = bitPosition - 1;
