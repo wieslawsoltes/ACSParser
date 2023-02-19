@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 
 namespace ACSParser;
 
@@ -64,15 +65,14 @@ public static class Decompressor
 
         while (bitPosition < bits.Length)
         {
-//var startPosition = bitPosition;
-
+#if DEBUG
+            var startPosition = bitPosition;
+#endif
             var firstBitOfSequence = !bits[bitPosition];
             bitPosition += 1;
 
             if (firstBitOfSequence)
             {
-//Debug(bits, startPosition, bitPosition + 7, "Uncompressed");
-
                 // Uncompressed Byte
                 var data = GetByte(bits, bitPosition);
                 results[insertionPoint] = data;
@@ -112,14 +112,12 @@ public static class Decompressor
                 // If the bit count is 20:
                 if (nextValueSizeInBits == 20 && byteOffsetInResult == 0x000FFFFF)
                 {
-//Debug(bits, bitPosition, bitPosition + nextValueSizeInBits, "End of Stream");
-                    bitPosition += nextValueSizeInBits;
                     // The end of the bit stream has been reached
+                    bitPosition += nextValueSizeInBits;
                     break;
                 }
 
                 bitPosition += nextValueSizeInBits;
-//System.Diagnostics.Debug.WriteLine($"nextValueSizeInBits={nextValueSizeInBits}");
                 byteOffsetInResult += valueToAdd[nextValueSizeInBits];
 
                 // Following the offset bits, count the number of sequential bits which have a value of 1.
@@ -130,7 +128,6 @@ public static class Decompressor
                 var sequenceCount = 0;
                 for (; sequenceCount < 11; sequenceCount++)
                 {
-//System.Diagnostics.Debug.WriteLine($"{bitPosition }={(bits[bitPosition] ? '1' : '0')}");
                     if (bits[bitPosition])
                     {
                         numDecodedByteSeqBits1++;
@@ -148,7 +145,11 @@ public static class Decompressor
 
                 if (sequenceCount == 10 && bits[bitPosition])
                 {
-                    throw new Exception("Invalid sequence.");
+#if DEBUG
+                    var endPosition = bitPosition - 1;
+                    Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
+#endif
+                    throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}");
                 }
 
                 if (remainingBitsInLastSequence > 0)
@@ -161,15 +162,16 @@ public static class Decompressor
                 // incrementing the insertion point after each BYTE,
                 // as the copying may overlap past the original insertion point
 
-//var endPosition = bitPosition - 1;
-//Debug(bits, startPosition, endPosition, $"Compressed, Offset={byteOffsetInResult}, Bytes={bytesDecodedInSequence}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
-
                 for (var i = 0; i < bytesDecodedInSequence; i++)
                 {
                     var sourcePoint = insertionPoint - byteOffsetInResult;
                     if (sourcePoint > results.Length - 1 || sourcePoint < 0)
                     {
-                        throw new Exception("Invalid offset.");
+#if DEBUG
+                        var endPosition = bitPosition - 1;
+                        Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
+#endif
+                        throw new Exception($"Invalid offset insertionPoint={insertionPoint}, byteOffsetInResult={byteOffsetInResult}.");
                     }
                     results[insertionPoint] = results[sourcePoint];
                     insertionPoint += 1;
@@ -180,7 +182,7 @@ public static class Decompressor
         return results;
     }
 
-    private static void Debug(BitArray bits, int startPosition, int endPosition, string message)
+    private static string GetBitstreamString(BitArray bits, int startPosition, int endPosition)
     {
         var bitString = "";
 
@@ -189,6 +191,6 @@ public static class Decompressor
             bitString += bits[i] ? "1" : "0";
         }
 
-        System.Diagnostics.Debug.WriteLine($"{bitString} [{startPosition}..{endPosition}] {message}");
+        return $"{bitString} [{startPosition}..{endPosition}]";
     }
 }
