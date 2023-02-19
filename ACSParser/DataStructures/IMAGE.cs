@@ -76,7 +76,7 @@ public class IMAGE
             Planes = 1,
             BitCount = 8,
             Compression = (ULONG)Compression.BI_RGB,
-            SizeImage = 0, // For BI_RGB it can be zero.
+            SizeImage = (ULONG)decompressed.Length, // For BI_RGB it can be zero.
             XPelsPerMeter = 0, // TODO:
             YPelsPerMeter = 0, // TODO:
             ClrUsed = 0,
