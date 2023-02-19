@@ -143,13 +143,18 @@ public static class Decompressor
 
                 bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits1);
 
-                if (sequenceCount == 10 && bits[bitPosition])
+                if (sequenceCount == 10 && bits[bitPosition - 1])
                 {
 #if DEBUG
-                    var endPosition = bitPosition - 1;
+                    var endPosition = bitPosition;
                     Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
 #endif
-                    throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}");
+                    throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
+                }
+
+                if (sequenceCount == 10)
+                {
+                    remainingBitsInLastSequence = 0;
                 }
 
                 if (remainingBitsInLastSequence > 0)
