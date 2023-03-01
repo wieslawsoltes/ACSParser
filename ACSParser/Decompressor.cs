@@ -19,7 +19,7 @@ public static class Decompressor
         [6] = 1, 
         [9] = 65, 
         [12] = 577, 
-        [20] = 2673
+        [20] = 4673
     };
 
     public static byte[] Decompress(byte[] compressedData, int decompressedDataSize)
