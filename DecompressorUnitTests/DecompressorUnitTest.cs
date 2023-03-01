@@ -58,10 +58,18 @@ public class DecompressorUnitTest
     }
 
     [Fact]
+    public void GetInt32()
+    {
+        var bits = new BitArray(new byte[] { 0b00000001, 0b00000000, 0b00000000, 0b00000000 });
+        var value = Decompressor.GetInt32(bits, 0, 32);
+        Assert.Equal(1, value);
+    }
+
+    [Fact]
     public void GetInt32_6_bits()
     {
         var nextValueSizeInBits = 6;
-        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var bits = new BitArray(new byte[] { 0b00000000, 0b00000000, 0b00000000 });
         var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
 
         Assert.Equal(0, byteOffsetInResult);
@@ -77,7 +85,7 @@ public class DecompressorUnitTest
     public void GetInt32_9_bits()
     {
         var nextValueSizeInBits = 9;
-        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var bits = new BitArray(new byte[] { 0b00000000, 0b00000000, 0b00000000 });
         var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
 
         Assert.Equal(0, byteOffsetInResult);
@@ -93,7 +101,7 @@ public class DecompressorUnitTest
     public void GetInt32_12_bits()
     {
         var nextValueSizeInBits = 12;
-        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var bits = new BitArray(new byte[] { 0b00000000, 0b00000000, 0b00000000 });
         var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
 
         Assert.Equal(0, byteOffsetInResult);
@@ -109,7 +117,7 @@ public class DecompressorUnitTest
     public void GetInt32_20bits()
     {
         var nextValueSizeInBits = 20;
-        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var bits = new BitArray(new byte[] { 0b00000000, 0b00000000, 0b00000000 });
         var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
 
         Assert.Equal(0, byteOffsetInResult);
