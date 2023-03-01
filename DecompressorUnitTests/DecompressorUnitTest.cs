@@ -1,11 +1,89 @@
+using System.Collections;
 using ACSParser;
 
 namespace DecompressorUnitTests;
 
 public class DecompressorUnitTest
 {
+
     [Fact]
-    public void Test1()
+    public void CountSeqBits_0()
+    {
+        var bits = new BitArray(4)
+        {
+            [0] = false,
+            [1] = false,
+            [2] = false,
+            [3] = false,
+        };
+
+        var bitPosition = 0;
+
+        var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        
+        Assert.Equal(0, numOffsetSeqBits);
+        Assert.Equal(1, bitPosition);
+    }
+
+    [Fact]
+    public void CountSeqBits_1()
+    {
+        var bits = new BitArray(4)
+        {
+            [0] = true,
+            [1] = false,
+            [2] = false,
+            [3] = false,
+        };
+
+        var bitPosition = 0;
+
+        var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        
+        Assert.Equal(1, numOffsetSeqBits);
+        Assert.Equal(2, bitPosition);
+    }
+
+    [Fact]
+    public void CountSeqBits_2()
+    {
+        var bits = new BitArray(4)
+        {
+            [0] = true,
+            [1] = true,
+            [2] = false,
+            [3] = false,
+        };
+
+        var bitPosition = 0;
+
+        var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        
+        Assert.Equal(2, numOffsetSeqBits);
+        Assert.Equal(3, bitPosition);
+    }
+
+    [Fact]
+    public void CountSeqBits_3()
+    {
+        var bits = new BitArray(4)
+        {
+            [0] = true,
+            [1] = true,
+            [2] = true,
+            [3] = false,
+        };
+
+        var bitPosition = 0;
+
+        var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        
+        Assert.Equal(3, numOffsetSeqBits);
+        Assert.Equal(3, bitPosition);
+    }
+
+    [Fact]
+    public void Sample()
     {
         byte[] compressedData = 
         {
