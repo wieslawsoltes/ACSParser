@@ -77,7 +77,8 @@ public static class Decompressor
                 }
 
                 bitPosition += nextValueSizeInBits;
-                byteOffsetInResult += ValueToAdd[nextValueSizeInBits];
+                var valueToAdd = ValueToAdd[nextValueSizeInBits];
+                byteOffsetInResult += valueToAdd;
 
                 // Following the offset bits, count the number of sequential bits which have a value of 1.
                 // The maximum number of bits is 11.
@@ -109,7 +110,8 @@ public static class Decompressor
                     }
                 }
 
-                bytesDecodedInSequence += GetValueFromBitCount(numDecodedByteSeqBits1);
+                var bytesDecodedInSequence1 = GetValueFromBitCount(numDecodedByteSeqBits1);
+                bytesDecodedInSequence += bytesDecodedInSequence1;
 
                 // TODO:
                 if (numDecodedByteSeqBits1 == 11)
@@ -117,9 +119,11 @@ public static class Decompressor
                     remainingBitsInLastSequence = 0;
                 }
 
+                var bytesDecodedInSequence2 = 0;
                 if (remainingBitsInLastSequence > 0)
                 {
-                    bytesDecodedInSequence += GetInt32(bits, bitPosition, remainingBitsInLastSequence);
+                    bytesDecodedInSequence2 = GetInt32(bits, bitPosition, remainingBitsInLastSequence);
+                    bytesDecodedInSequence += bytesDecodedInSequence2;
                     bitPosition += remainingBitsInLastSequence;
                 }
 
@@ -169,24 +173,24 @@ public static class Decompressor
         return numOffsetSeqBits;
     }
 
-    public static byte GetByte(BitArray src, int startBitPosition)
+    public static byte GetByte(BitArray bits, int startBitPosition)
     {
         var dst = new BitArray(8);
         for (var i = 0; i < 8; i++)
         {
-            dst[i] = src[startBitPosition + i];
+            dst[i] = bits[startBitPosition + i];
         }
         var bytes = new byte[1];
         dst.CopyTo(bytes, 0);
         return bytes[0];
     }
 
-    public static Int32 GetInt32(BitArray src, int startBitPosition, int bitsCount)
+    public static Int32 GetInt32(BitArray bits, int startBitPosition, int bitsCount)
     {
         var dst = new BitArray(32);
         for (var i = 0; i < bitsCount; i++)
         {
-            dst[i] = src[startBitPosition + i];
+            dst[i] = bits[startBitPosition + i];
         }
         var bytes = new byte[4];
         dst.CopyTo(bytes, 0);
