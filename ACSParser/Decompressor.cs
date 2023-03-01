@@ -6,39 +6,21 @@ namespace ACSParser;
 
 public static class Decompressor
 {
-    private static byte GetByte(BitArray src, int startBitPosition)
+    public static int[] NextValueSizeBits =
     {
-        var dst = new BitArray(8);
-        for (var i = 0; i < 8; i++)
-        {
-            dst[i] = src[startBitPosition + i];
-        }
-        var bytes = new byte[1];
-        dst.CopyTo(bytes, 0);
-        return bytes[0];
-    }
+        6, 
+        9, 
+        12, 
+        20
+    };
 
-    private static Int32 GetInt32(BitArray src, int startBitPosition, int bitsCount)
+    public static Dictionary<int, int> ValueToAdd = new()
     {
-        var dst = new BitArray(32);
-        for (var i = 0; i < bitsCount; i++)
-        {
-            dst[i] = src[startBitPosition + i];
-        }
-        var bytes = new byte[4];
-        dst.CopyTo(bytes, 0);
-        return BitConverter.ToInt32(bytes, 0);
-    }
-
-    private static int GetValueFromBitCount(int bitCount)
-    {
-        var value = 0;
-        for (var i = 0; i < bitCount; i++) 
-        {
-            value = (value << 1) | 1;
-        }
-        return value;
-    }
+        [6] = 1, 
+        [9] = 65, 
+        [12] = 577, 
+        [20] = 2673
+    };
 
     public static byte[] Decompress(byte[] compressedData, int decompressedDataSize)
     {
@@ -51,16 +33,6 @@ public static class Decompressor
 
         // Header 0x00
         bitPosition += 8;
-
-        var nextValueSizeBits = new []
-        {
-            6, 9, 12, 20
-        };
-
-        var valueToAdd = new Dictionary<int, int>
-        {
-            [6] = 1, [9] = 65, [12] = 577, [20] = 2673
-        };
 
         while (bitPosition < bits.Length)
         {
@@ -82,21 +54,9 @@ public static class Decompressor
             {
                 // Number of bits that make up the next value in the sequence
 
-                var numOffsetSeqBits = 0;
-                for (var i = 0; i < 3; i++)
-                {
-                    if (bits[bitPosition + i])
-                    {
-                        numOffsetSeqBits++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                bitPosition += numOffsetSeqBits == 3 ? numOffsetSeqBits : numOffsetSeqBits + 1;
+                var numOffsetSeqBits = CountSeqBits(bits, ref bitPosition);
 
-                var nextValueSizeInBits = nextValueSizeBits[numOffsetSeqBits];
+                var nextValueSizeInBits = NextValueSizeBits[numOffsetSeqBits];
 
                 // Number of BYTEs that will be decoded from the sequence
 
@@ -117,7 +77,7 @@ public static class Decompressor
                 }
 
                 bitPosition += nextValueSizeInBits;
-                byteOffsetInResult += valueToAdd[nextValueSizeInBits];
+                byteOffsetInResult += ValueToAdd[nextValueSizeInBits];
 
                 // Following the offset bits, count the number of sequential bits which have a value of 1.
                 // The maximum number of bits is 11.
@@ -187,7 +147,63 @@ public static class Decompressor
         return results;
     }
 
-    private static string GetBitstreamString(BitArray bits, int startPosition, int endPosition)
+    public static int CountSeqBits(BitArray bits, ref int bitPosition)
+    {
+        var numOffsetSeqBits = 0;
+        for (var i = 0; i < 3; i++)
+        {
+            if (bits[bitPosition + i])
+            {
+                numOffsetSeqBits++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        bitPosition += numOffsetSeqBits == 3 
+            ? numOffsetSeqBits 
+            : numOffsetSeqBits + 1;
+
+        return numOffsetSeqBits;
+    }
+
+    public static byte GetByte(BitArray src, int startBitPosition)
+    {
+        var dst = new BitArray(8);
+        for (var i = 0; i < 8; i++)
+        {
+            dst[i] = src[startBitPosition + i];
+        }
+        var bytes = new byte[1];
+        dst.CopyTo(bytes, 0);
+        return bytes[0];
+    }
+
+    public static Int32 GetInt32(BitArray src, int startBitPosition, int bitsCount)
+    {
+        var dst = new BitArray(32);
+        for (var i = 0; i < bitsCount; i++)
+        {
+            dst[i] = src[startBitPosition + i];
+        }
+        var bytes = new byte[4];
+        dst.CopyTo(bytes, 0);
+        return BitConverter.ToInt32(bytes, 0);
+    }
+
+    public static int GetValueFromBitCount(int bitCount)
+    {
+        var value = 0;
+        for (var i = 0; i < bitCount; i++) 
+        {
+            value = (value << 1) | 1;
+        }
+        return value;
+    }
+
+    public static string GetBitstreamString(BitArray bits, int startPosition, int endPosition)
     {
         var bitString = "";
 
