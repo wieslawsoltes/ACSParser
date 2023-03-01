@@ -11,9 +11,11 @@ public class DecompressorUnitTest
         var bits = new BitArray(new[] { 0b00000000 });
         var bitPosition = 0;
         var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        var nextValueSizeInBits = Decompressor.NextValueSizeBits[numOffsetSeqBits];
 
         Assert.Equal(0, numOffsetSeqBits);
         Assert.Equal(1, bitPosition);
+        Assert.Equal(6, nextValueSizeInBits);
     }
 
     [Fact]
@@ -22,9 +24,11 @@ public class DecompressorUnitTest
         var bits = new BitArray(new[] { 0b00000001 });
         var bitPosition = 0;
         var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        var nextValueSizeInBits = Decompressor.NextValueSizeBits[numOffsetSeqBits];
 
         Assert.Equal(1, numOffsetSeqBits);
         Assert.Equal(2, bitPosition);
+        Assert.Equal(9, nextValueSizeInBits);
     }
 
     [Fact]
@@ -33,9 +37,11 @@ public class DecompressorUnitTest
         var bits = new BitArray(new[] { 0b00000011 });
         var bitPosition = 0;
         var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        var nextValueSizeInBits = Decompressor.NextValueSizeBits[numOffsetSeqBits];
         
         Assert.Equal(2, numOffsetSeqBits);
         Assert.Equal(3, bitPosition);
+        Assert.Equal(12, nextValueSizeInBits);
     }
 
     [Fact]
@@ -44,9 +50,11 @@ public class DecompressorUnitTest
         var bits = new BitArray(new[] { 0b00000111 });
         var bitPosition = 0;
         var numOffsetSeqBits = Decompressor.CountSeqBits(bits, ref bitPosition);
+        var nextValueSizeInBits = Decompressor.NextValueSizeBits[numOffsetSeqBits];
         
         Assert.Equal(3, numOffsetSeqBits);
         Assert.Equal(3, bitPosition);
+        Assert.Equal(20, nextValueSizeInBits);
     }
 
     [Fact]
