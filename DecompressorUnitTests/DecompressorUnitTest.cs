@@ -58,6 +58,70 @@ public class DecompressorUnitTest
     }
 
     [Fact]
+    public void GetInt32_6_bits()
+    {
+        var nextValueSizeInBits = 6;
+        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
+
+        Assert.Equal(0, byteOffsetInResult);
+
+        var valueToAdd = Decompressor.ValueToAdd[nextValueSizeInBits];
+        Assert.Equal(1, valueToAdd);
+
+        byteOffsetInResult += valueToAdd;
+        Assert.Equal(1, valueToAdd);
+    }
+
+    [Fact]
+    public void GetInt32_9_bits()
+    {
+        var nextValueSizeInBits = 9;
+        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
+
+        Assert.Equal(0, byteOffsetInResult);
+
+        var valueToAdd = Decompressor.ValueToAdd[nextValueSizeInBits];
+        Assert.Equal(65, valueToAdd);
+
+        byteOffsetInResult += valueToAdd;
+        Assert.Equal(65, valueToAdd);
+    }
+
+    [Fact]
+    public void GetInt32_12_bits()
+    {
+        var nextValueSizeInBits = 12;
+        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
+
+        Assert.Equal(0, byteOffsetInResult);
+
+        var valueToAdd = Decompressor.ValueToAdd[nextValueSizeInBits];
+        Assert.Equal(577, valueToAdd);
+
+        byteOffsetInResult += valueToAdd;
+        Assert.Equal(577, valueToAdd);
+    }
+
+    [Fact]
+    public void GetInt32_20bits()
+    {
+        var nextValueSizeInBits = 20;
+        var bits = new BitArray(new[] { 0b00000000, 0b00000000, 0b00000000 });
+        var byteOffsetInResult = Decompressor.GetInt32(bits, 0, nextValueSizeInBits);
+
+        Assert.Equal(0, byteOffsetInResult);
+
+        var valueToAdd = Decompressor.ValueToAdd[nextValueSizeInBits];
+        Assert.Equal(4673, valueToAdd);
+
+        byteOffsetInResult += valueToAdd;
+        Assert.Equal(4673, valueToAdd);
+    }
+
+    [Fact]
     public void Sample()
     {
         byte[] compressedData = 
