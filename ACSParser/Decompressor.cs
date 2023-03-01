@@ -62,7 +62,6 @@ public static class Decompressor
             [6] = 1, [9] = 65, [12] = 577, [20] = 2673
         };
 
-
         while (bitPosition < bits.Length)
         {
 #if DEBUG
