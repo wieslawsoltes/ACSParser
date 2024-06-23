@@ -81,72 +81,69 @@ namespace ACSParser
         {
             ulong controlBits = BitConverter.ToUInt64(buffer, currentReadPtr - 4);
 
-            if ((controlBits & (1UL << bitOffset)) != 0)
+            if ((controlBits & (1UL << bitOffset)) == 0)
             {
-                if ((controlBits & (2UL << bitOffset)) != 0)
-                {
-                    if ((controlBits & (4UL << bitOffset)) != 0)
-                    {
-                        ulong maskedValue = controlBits >> (bitOffset + 4);
-                        if ((controlBits & (8UL << bitOffset)) != 0)
-                        {
-                            long offsetValue = (long)(maskedValue & 0xfffff);
-                            if (offsetValue == 0xfffff)
-                            {
-                                actualDecompressedSize = currentWritePtr;
-                                return 1;
-                            }
-                            else
-                            {
-                                int incrementSize = 2;
-                                int shiftedBitPosition = bitOffset | 24;
-                                int lengthToAdd = (int)offsetValue + 0x1241;
-                                return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr,
-                                    shiftedBitPosition, lengthToAdd, incrementSize, ref actualDecompressedSize);
-                            }
-                        }
-                        else
-                        {
-                            int incrementSize = 1;
-                            int shiftedBitPosition = bitOffset | 16;
-                            int lengthToAdd = (int)(maskedValue & 4095) + 577;
-                            return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr,
-                                shiftedBitPosition, lengthToAdd, incrementSize, ref actualDecompressedSize);
-                        }
-                    }
-                    else
-                    {
-                        int incrementSize = 1;
-                        int shiftedBitPosition = bitOffset + 12;
-                        int lengthToAdd = (int)((controlBits >> (bitOffset + 3) & 511) + 65);
-                        return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr,
-                            shiftedBitPosition, lengthToAdd, incrementSize, ref actualDecompressedSize);
-                    }
-                }
-                else
-                {
-                    int incrementSize = 1;
-                    int shiftedBitPosition = bitOffset | 8;
-                    int lengthToAdd = (int)((controlBits >> (bitOffset + 2) & 63) + 1);
-                    return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr, shiftedBitPosition,
-                        lengthToAdd, incrementSize, ref actualDecompressedSize);
-                }
+                return HandleLiteralByte(buffer, decompBuffer, controlBits, currentReadPtr, currentWritePtr, bitOffset,
+                    ref actualDecompressedSize);
+            }
+
+            int shiftedBitPosition;
+            int lengthToAdd;
+            int incrementSize;
+
+            if ((controlBits & (2UL << bitOffset)) == 0)
+            {
+                shiftedBitPosition = bitOffset | 8;
+                lengthToAdd = (int)((controlBits >> (bitOffset + 2) & 63) + 1);
+                incrementSize = 1;
+            }
+            else if ((controlBits & (4UL << bitOffset)) == 0)
+            {
+                shiftedBitPosition = bitOffset + 12;
+                lengthToAdd = (int)((controlBits >> (bitOffset + 3) & 511) + 65);
+                incrementSize = 1;
             }
             else
             {
-                if (currentWritePtr >= decompBuffer.Length)
+                ulong maskedValue = controlBits >> (bitOffset + 4);
+                if ((controlBits & (8UL << bitOffset)) == 0)
                 {
-                    return 0;
+                    shiftedBitPosition = bitOffset | 16;
+                    lengthToAdd = (int)(maskedValue & 4095) + 577;
+                    incrementSize = 1;
                 }
                 else
                 {
-                    decompBuffer[currentWritePtr] = (byte)(controlBits >> (bitOffset + 1));
-                    int newWritePtr = currentWritePtr + 1;
-                    int newBitOffset = bitOffset + 9;
-                    return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset,
-                        ref actualDecompressedSize);
+                    long offsetValue = (long)(maskedValue & 0xfffff);
+                    if (offsetValue == 0xfffff)
+                    {
+                        actualDecompressedSize = currentWritePtr;
+                        return 1;
+                    }
+
+                    shiftedBitPosition = bitOffset | 24;
+                    lengthToAdd = (int)offsetValue + 0x1241;
+                    incrementSize = 2;
                 }
             }
+
+            return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr, shiftedBitPosition,
+                lengthToAdd, incrementSize, ref actualDecompressedSize);
+        }
+
+        private static long HandleLiteralByte(byte[] buffer, byte[] decompBuffer, ulong controlBits, int currentReadPtr,
+            int currentWritePtr, int bitOffset, ref long actualDecompressedSize)
+        {
+            if (currentWritePtr >= decompBuffer.Length)
+            {
+                return 0;
+            }
+
+            decompBuffer[currentWritePtr] = (byte)(controlBits >> (bitOffset + 1));
+            int newWritePtr = currentWritePtr + 1;
+            int newBitOffset = bitOffset + 9;
+            return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset,
+                ref actualDecompressedSize);
         }
 
         private static long DecodeNextBlock(byte[] buffer, byte[] decompBuffer, int dataReadPtr, int dataWritePtr,
