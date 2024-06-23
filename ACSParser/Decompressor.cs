@@ -4,218 +4,295 @@ using System.Diagnostics;
 
 namespace ACSParser;
 
-public static class Decompressor
+public unsafe static class Decompressor
 {
-    public static int[] NextValueSizeBits =
+    public static byte[] Decompress(byte[] compressed, int expectedDecompressedSize)
     {
-        6, 
-        9, 
-        12, 
-        20
-    };
+        uint compressedSize = (uint)compressed.Length;
+        
+        // Allocate memory for decompressed data
+        byte[] decompressed = new byte[expectedDecompressedSize];
 
-    public static Dictionary<int, int> ValueToAdd = new()
-    {
-        [6] = 1, 
-        [9] = 65, 
-        [12] = 577, 
-        [20] = 4673
-    };
+        // Temporary buffer for decompression (size based on the function's behavior)
+        byte[] tempBuffer = new byte[compressedSize + expectedDecompressedSize];
 
-    public static byte[] Decompress(byte[] compressedData, int decompressedDataSize)
-    {
-        var results = new byte[decompressedDataSize];
-        var bits = new BitArray(compressedData);
-        var bitPosition = 0;
-        var insertionPoint = 0;
+        // Copy compressed data to temp_buffer (the function seems to work backwards)
+        Array.Copy(compressed, tempBuffer, compressedSize);
 
-//Debug(bits, 0, 7, "Header");
+        // Variable to store the actual decompressed size
+        long actualDecompressedSize = 0;
 
-        // Header 0x00
-        bitPosition += 8;
+        // Call the decompression function
 
-        while (bitPosition < bits.Length)
+        fixed (byte* tempBufferPtr = tempBuffer)
+        fixed (byte* decompressedPtr = decompressed)
         {
-#if DEBUG
-            var startPosition = bitPosition;
-#endif
-            var firstBitOfSequence = !bits[bitPosition];
-            bitPosition += 1;
+            long result = DecompressCore(
+                (long)tempBufferPtr,
+                compressedSize,
+                (long)decompressedPtr,
+                (long)(decompressedPtr + expectedDecompressedSize),
+                out actualDecompressedSize);
 
-            if (firstBitOfSequence)
+            if (result == 1)
             {
-                // Uncompressed Byte
-                var data = GetByte(bits, bitPosition);
-                results[insertionPoint] = data;
-                bitPosition += 8;
-                insertionPoint += 1;
+                // Console.WriteLine("Decompression successful");
+                // Console.WriteLine($"Actual decompressed size: {actualDecompressedSize}");
+                //
+                // // Print the decompressed data
+                // for (int i = 0; i < actualDecompressedSize; i++)
+                // {
+                //     Console.Write($"0x{decompressed[i]:X2},");
+                // }
+                // Console.WriteLine();
             }
             else
             {
-                // Number of bits that make up the next value in the sequence
+                throw new InvalidOperationException("Decompression failed");
+            }
+        }
 
-                var numOffsetSeqBits = CountSeqBits(bits, ref bitPosition);
+        return decompressed;
+    }
+    
+    
+    public static long DecompressCore(long bufferPtr, long compressedDataLen, long decompStartPtr, long decompEndPtr,
+        out long actualDecompressedSize)
+    {
+        actualDecompressedSize = 0;
 
-                var nextValueSizeInBits = NextValueSizeBits[numOffsetSeqBits];
+        if (compressedDataLen <= 7)
+        {
+            return 0;
+        }
 
-                // Number of BYTEs that will be decoded from the sequence
+        long endBufferPtr = compressedDataLen + bufferPtr;
+        int endPaddingCounter = 0;
+        endBufferPtr--;
+        long result = 0;
 
-                var bytesDecodedInSequence = 2;
-                
-                // Value is an offset,
-                // in BYTEs, within the destination buffer,
-                // subtracted from the buffer's current insertion point.
-
-                var byteOffsetInResult = GetInt32(bits, bitPosition, nextValueSizeInBits);
-
-                // If the bit count is 20:
-                if (nextValueSizeInBits == 20 && byteOffsetInResult == 0x000FFFFF)
+        unsafe
+        {
+            while (*(byte*)endBufferPtr == 0xFF)
+            {
+                endPaddingCounter++;
+                if (endPaddingCounter >= 6)
                 {
-                    // The end of the bit stream has been reached
-                    bitPosition += nextValueSizeInBits;
-                    break;
+                    result = 0;
+                    if (*(byte*)bufferPtr != 0)
+                    {
+                        return result;
+                    }
+                    else
+                    {
+                        ulong decompBufferLimit = (ulong)(decompEndPtr + decompStartPtr);
+                        long currentWritePtr = decompStartPtr;
+                        long currentReadPtr = bufferPtr + 5;
+                        long bitOffset = 0;
+                        return ProcessControlBits(currentReadPtr, currentWritePtr, bitOffset, decompBufferLimit,
+                            decompStartPtr, ref actualDecompressedSize);
+                    }
                 }
 
-                bitPosition += nextValueSizeInBits;
-                var valueToAdd = ValueToAdd[nextValueSizeInBits];
-                byteOffsetInResult += valueToAdd;
+                endBufferPtr--;
+                result = 0;
+            }
+        }
 
-                // Following the offset bits, count the number of sequential bits which have a value of 1.
-                // The maximum number of bits is 11.
+        return result;
+    }
 
-                var numDecodedByteSeqBits1 = 0;
-                var remainingBitsInLastSequence = 0;
-                var sequenceCount = 0;
-                for (; sequenceCount < 11; sequenceCount++)
+    private static unsafe long ProcessControlBits(long currentReadPtr, long currentWritePtr, long bitOffset,
+        ulong decompBufferLimit, long decompStartPtr, ref long actualDecompressedSize)
+    {
+        ulong bitShift = (ulong)bitOffset;
+        long dataReadPtr = currentReadPtr;
+        long dataWritePtr = currentWritePtr;
+        ulong controlBits = *(ulong*)(dataReadPtr - 4);
+
+        if ((controlBits & (1UL << (int)bitShift)) != 0)
+        {
+            if ((controlBits & (2UL << (int)bitShift)) != 0)
+            {
+                if ((controlBits & (4UL << (int)bitShift)) != 0)
                 {
-                    if (bits[bitPosition])
+                    ulong maskedValue = controlBits >> (int)(bitShift + 4);
+                    if ((controlBits & (8UL << (int)bitShift)) != 0)
                     {
-                        numDecodedByteSeqBits1++;
-                        remainingBitsInLastSequence++;
-                        bitPosition += 1;
-
-                        if (sequenceCount == 10 && bits[bitPosition])
+                        long offsetValue = (long)(maskedValue & 0xfffff);
+                        if (offsetValue == 0xfffff)
                         {
-#if DEBUG
-                            var endPosition = bitPosition;
-                            Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
-#endif
-                            throw new Exception($"Invalid sequence sequenceCount={sequenceCount}, bitPosition={bitPosition}, remainingBitsInLastSequence={remainingBitsInLastSequence}");
+                            actualDecompressedSize = dataWritePtr - decompStartPtr;
+                            return 1;
+                        }
+                        else
+                        {
+                            long incrementSize = 2;
+                            long shiftedBitPosition = (long)bitShift | 24;
+                            long lengthToAdd = offsetValue + 0x1241;
+                            return DecodeNextBlock(dataReadPtr, dataWritePtr, shiftedBitPosition, lengthToAdd,
+                                incrementSize, decompBufferLimit, decompStartPtr, ref actualDecompressedSize);
                         }
                     }
                     else
                     {
-                        bitPosition += 1;
-                        break;
+                        long incrementSize = 1;
+                        long shiftedBitPosition = (long)bitShift | 16;
+                        long lengthToAdd = ((long)maskedValue & 4095) + 577;
+                        return DecodeNextBlock(dataReadPtr, dataWritePtr, shiftedBitPosition, lengthToAdd,
+                            incrementSize, decompBufferLimit, decompStartPtr, ref actualDecompressedSize);
                     }
                 }
-
-                var bytesDecodedInSequence1 = GetValueFromBitCount(numDecodedByteSeqBits1);
-                bytesDecodedInSequence += bytesDecodedInSequence1;
-
-                // TODO:
-                if (numDecodedByteSeqBits1 == 11)
+                else
                 {
-                    remainingBitsInLastSequence = 0;
+                    long incrementSize = 1;
+                    long shiftedBitPosition = (long)bitShift + 12;
+                    long lengthToAdd = (long)((controlBits >> (int)(bitShift + 3) & 511) + 65);
+                    return DecodeNextBlock(dataReadPtr, dataWritePtr, shiftedBitPosition, lengthToAdd, incrementSize,
+                        decompBufferLimit, decompStartPtr, ref actualDecompressedSize);
                 }
-
-                var bytesDecodedInSequence2 = 0;
-                if (remainingBitsInLastSequence > 0)
-                {
-                    bytesDecodedInSequence2 = GetInt32(bits, bitPosition, remainingBitsInLastSequence);
-                    bytesDecodedInSequence += bytesDecodedInSequence2;
-                    bitPosition += remainingBitsInLastSequence;
-                }
-
-                // Copy the BYTEs one at a time,
-                // incrementing the insertion point after each BYTE,
-                // as the copying may overlap past the original insertion point
-
-                for (var i = 0; i < bytesDecodedInSequence; i++)
-                {
-                    var sourcePoint = insertionPoint - byteOffsetInResult;
-                    if (sourcePoint > results.Length - 1 || sourcePoint < 0 || insertionPoint > results.Length - 1)
-                    {
-#if DEBUG
-                        var endPosition = bitPosition - 1;
-                        Console.WriteLine(GetBitstreamString(bits, startPosition, endPosition));
-#endif
-                        throw new Exception($"Invalid offset insertionPoint={insertionPoint}, byteOffsetInResult={byteOffsetInResult}, numDecodedByteSeqBits1={numDecodedByteSeqBits1}, remainingBitsInLastSequence={remainingBitsInLastSequence}.");
-                    }
-                    results[insertionPoint] = results[sourcePoint];
-                    insertionPoint += 1;
-                }
-            }
-        }
-
-        return results;
-    }
-
-    public static int CountSeqBits(BitArray bits, ref int bitPosition)
-    {
-        var numOffsetSeqBits = 0;
-        for (var i = 0; i < 3; i++)
-        {
-            if (bits[bitPosition + i])
-            {
-                numOffsetSeqBits++;
             }
             else
             {
-                break;
+                long incrementSize = 1;
+                long shiftedBitPosition = (long)bitShift | 8;
+                long lengthToAdd = (long)((controlBits >> (int)(bitShift + 2) & 63) + 1);
+                return DecodeNextBlock(dataReadPtr, dataWritePtr, shiftedBitPosition, lengthToAdd, incrementSize,
+                    decompBufferLimit, decompStartPtr, ref actualDecompressedSize);
             }
         }
-
-        bitPosition += numOffsetSeqBits == 3 
-            ? numOffsetSeqBits 
-            : numOffsetSeqBits + 1;
-
-        return numOffsetSeqBits;
+        else
+        {
+            if (decompBufferLimit <= (ulong)dataWritePtr)
+            {
+                return 0;
+            }
+            else
+            {
+                *(byte*)dataWritePtr = (byte)(controlBits >> (int)(bitShift + 1));
+                long newWritePtr = dataWritePtr + 1;
+                long nextReadPtr = dataReadPtr;
+                long newBitOffset = (long)bitShift + 9;
+                return UpdatePointersAfterCopy(newWritePtr, nextReadPtr, newBitOffset, decompBufferLimit,
+                    decompStartPtr, ref actualDecompressedSize);
+            }
+        }
     }
 
-    public static byte GetByte(BitArray bits, int startBitPosition)
+    private static unsafe long DecodeNextBlock(long dataReadPtr, long dataWritePtr, long shiftedBitPosition,
+        long lengthToAdd,
+        long incrementSize, ulong decompBufferLimit, long decompStartPtr, ref long actualDecompressedSize)
     {
-        var dst = new BitArray(8);
-        for (var i = 0; i < 8; i++)
+        long copyLength = lengthToAdd;
+        long nextDataReadPtr = (shiftedBitPosition >> 3) + dataReadPtr;
+        ulong nextControlBits = *(ulong*)(nextDataReadPtr - 4);
+        ulong nextBitShift = (ulong)(shiftedBitPosition & 7);
+        int retryCounter = 0;
+        int bitMaskIndex = 0;
+
+        if ((1UL << (int)nextBitShift & nextControlBits) != 0)
         {
-            dst[i] = bits[startBitPosition + i];
+            return CheckBitMaskLoop(retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength,
+                decompBufferLimit, decompStartPtr, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
         }
-        var bytes = new byte[1];
-        dst.CopyTo(bytes, 0);
-        return bytes[0];
+        else
+        {
+            return ProcessDecodedLength(bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr,
+                copyLength, decompBufferLimit, decompStartPtr, nextDataReadPtr, ref actualDecompressedSize);
+        }
     }
 
-    public static Int32 GetInt32(BitArray bits, int startBitPosition, int bitsCount)
+    private static unsafe long CheckBitMaskLoop(int retryCounter, int bitMaskIndex, ulong nextControlBits,
+        ulong nextBitShift,
+        long dataWritePtr, long copyLength, ulong decompBufferLimit, long decompStartPtr, long nextDataReadPtr,
+        long incrementSize, ref long actualDecompressedSize)
     {
-        var dst = new BitArray(32);
-        for (var i = 0; i < bitsCount; i++)
+        if (retryCounter > 10)
         {
-            dst[i] = bits[startBitPosition + i];
+            return 0;
         }
-        var bytes = new byte[4];
-        dst.CopyTo(bytes, 0);
-        return BitConverter.ToInt32(bytes, 0);
+        else
+        {
+            int incrementedRetryCounter = retryCounter + 1;
+            retryCounter = incrementedRetryCounter;
+            bitMaskIndex = incrementedRetryCounter;
+            if ((1UL << ((incrementedRetryCounter + (int)nextBitShift) & 31) & nextControlBits) != 0)
+            {
+                return CheckBitMaskLoop(retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr,
+                    copyLength, decompBufferLimit, decompStartPtr, nextDataReadPtr, incrementSize,
+                    ref actualDecompressedSize);
+            }
+            else
+            {
+                return ProcessDecodedLength(bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr,
+                    copyLength, decompBufferLimit, decompStartPtr, nextDataReadPtr, ref actualDecompressedSize);
+            }
+        }
     }
 
-    public static int GetValueFromBitCount(int bitCount)
+    private static unsafe long ProcessDecodedLength(int bitMaskIndex, ulong nextBitShift, ulong nextControlBits,
+        long incrementSize, long dataWritePtr, long copyLength, ulong decompBufferLimit, long decompStartPtr,
+        long nextDataReadPtr, ref long actualDecompressedSize)
     {
-        var value = 0;
-        for (var i = 0; i < bitCount; i++) 
+        ulong bitMask = 1UL << (bitMaskIndex & 31);
+        long incrementedBitShift = (long)nextBitShift + 1;
+        long decodedLength = (long)bitMask + incrementSize +
+                             (long)((nextControlBits >> ((bitMaskIndex + (int)incrementedBitShift) & 31)) &
+                                    (bitMask - 1));
+
+        if (dataWritePtr - decompStartPtr < copyLength ||
+            decompBufferLimit - (ulong)dataWritePtr < (ulong)decodedLength)
         {
-            value = (value << 1) | 1;
+            return 0;
         }
-        return value;
+        else
+        {
+            long totalBitOffset = 2 * bitMaskIndex + incrementedBitShift;
+            long newWritePtr = dataWritePtr;
+            long nextReadPtr = nextDataReadPtr;
+            long newBitOffset = totalBitOffset;
+
+            if (decodedLength > 0)
+            {
+                long copyDestPtr = dataWritePtr - copyLength;
+                long remainingLength = decodedLength;
+                long copySourcePtr = dataWritePtr;
+                return CopyDecompressedData(copyDestPtr, remainingLength, copySourcePtr, newWritePtr, nextReadPtr,
+                    newBitOffset, totalBitOffset, decompBufferLimit, decompStartPtr, ref actualDecompressedSize);
+            }
+            else
+            {
+                return UpdatePointersAfterCopy(newWritePtr, nextReadPtr, newBitOffset, decompBufferLimit,
+                    decompStartPtr, ref actualDecompressedSize);
+            }
+        }
     }
 
-    public static string GetBitstreamString(BitArray bits, int startPosition, int endPosition)
+    private static unsafe long CopyDecompressedData(long copyDestPtr, long remainingLength, long copySourcePtr,
+        long newWritePtr, long nextReadPtr, long newBitOffset, long totalBitOffset, ulong decompBufferLimit,
+        long decompStartPtr, ref long actualDecompressedSize)
     {
-        var bitString = "";
-
-        for (var i = startPosition; i <= endPosition; i++)
+        while (remainingLength > 0)
         {
-            bitString += bits[i] ? "1" : "0";
+            *(byte*)copySourcePtr = *(byte*)copyDestPtr;
+            copyDestPtr++;
+            copySourcePtr++;
+            remainingLength--;
         }
 
-        return $"{bitString} [{startPosition}..{endPosition}]";
+        newWritePtr = copySourcePtr;
+
+        return UpdatePointersAfterCopy(newWritePtr, nextReadPtr, newBitOffset, decompBufferLimit, decompStartPtr,
+            ref actualDecompressedSize);
+    }
+
+    private static unsafe long UpdatePointersAfterCopy(long newWritePtr, long nextReadPtr, long newBitOffset,
+        ulong decompBufferLimit, long decompStartPtr, ref long actualDecompressedSize)
+    {
+        long currentWritePtr = newWritePtr;
+        long currentReadPtr = (newBitOffset >> 3) + nextReadPtr;
+        long bitOffset = newBitOffset & 7;
+        return ProcessControlBits(currentReadPtr, currentWritePtr, bitOffset, decompBufferLimit, decompStartPtr,
+            ref actualDecompressedSize);
     }
 }
