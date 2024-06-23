@@ -6,24 +6,24 @@ namespace ACSParser
     {
         public static byte[] Decompress(byte[] compressed, int expectedDecompressedSize)
         {
-            uint compressedSize = (uint)compressed.Length;
+            var compressedSize = (uint)compressed.Length;
 
             // Allocate memory for decompressed data
-            byte[] decompressed = new byte[expectedDecompressedSize];
+            var decompressed = new byte[expectedDecompressedSize];
 
             // Temporary buffer for decompression (size based on the function's behavior)
-            byte[] tempBuffer = new byte[compressedSize + expectedDecompressedSize];
+            var tempBuffer = new byte[compressedSize + expectedDecompressedSize];
 
             // Copy compressed data to temp_buffer (the function seems to work backwards)
             Array.Copy(compressed, tempBuffer, compressedSize);
 
             // Call the decompression function
 
-            long result = DecompressCore(
+            var result = DecompressCore(
                 tempBuffer,
                 compressedSize,
                 decompressed,
-                out long actualDecompressedSize);
+                out var actualDecompressedSize);
 
             if (result == 1)
             {
@@ -45,8 +45,8 @@ namespace ACSParser
                 return 0;
             }
 
-            int endBufferPtr = (int)compressedDataLen - 1;
-            int endPaddingCounter = 0;
+            var endBufferPtr = (int)compressedDataLen - 1;
+            var endPaddingCounter = 0;
             long result = 0;
 
             while (buffer[endBufferPtr] == 0xFF)
@@ -61,9 +61,9 @@ namespace ACSParser
                     }
                     else
                     {
-                        int currentWritePtr = 0;
-                        int currentReadPtr = 5;
-                        int bitOffset = 0;
+                        var currentWritePtr = 0;
+                        var currentReadPtr = 5;
+                        var bitOffset = 0;
                         return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset,
                             ref actualDecompressedSize);
                     }
@@ -79,7 +79,7 @@ namespace ACSParser
         private static long ProcessControlBits(byte[] buffer, byte[] decompBuffer, int currentReadPtr,
             int currentWritePtr, int bitOffset, ref long actualDecompressedSize)
         {
-            ulong controlBits = BitConverter.ToUInt64(buffer, currentReadPtr - 4);
+            var controlBits = BitConverter.ToUInt64(buffer, currentReadPtr - 4);
 
             if ((controlBits & (1UL << bitOffset)) == 0)
             {
@@ -105,7 +105,7 @@ namespace ACSParser
             }
             else
             {
-                ulong maskedValue = controlBits >> (bitOffset + 4);
+                var maskedValue = controlBits >> (bitOffset + 4);
                 if ((controlBits & (8UL << bitOffset)) == 0)
                 {
                     shiftedBitPosition = bitOffset | 16;
@@ -114,7 +114,7 @@ namespace ACSParser
                 }
                 else
                 {
-                    long offsetValue = (long)(maskedValue & 0xfffff);
+                    var offsetValue = (long)(maskedValue & 0xfffff);
                     if (offsetValue == 0xfffff)
                     {
                         actualDecompressedSize = currentWritePtr;
@@ -140,8 +140,8 @@ namespace ACSParser
             }
 
             decompBuffer[currentWritePtr] = (byte)(controlBits >> (bitOffset + 1));
-            int newWritePtr = currentWritePtr + 1;
-            int newBitOffset = bitOffset + 9;
+            var newWritePtr = currentWritePtr + 1;
+            var newBitOffset = bitOffset + 9;
             return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset,
                 ref actualDecompressedSize);
         }
@@ -149,12 +149,12 @@ namespace ACSParser
         private static long DecodeNextBlock(byte[] buffer, byte[] decompBuffer, int dataReadPtr, int dataWritePtr,
             int shiftedBitPosition, int lengthToAdd, int incrementSize, ref long actualDecompressedSize)
         {
-            int copyLength = lengthToAdd;
-            int nextDataReadPtr = (shiftedBitPosition >> 3) + dataReadPtr;
-            ulong nextControlBits = BitConverter.ToUInt64(buffer, nextDataReadPtr - 4);
-            int nextBitShift = shiftedBitPosition & 7;
-            int retryCounter = 0;
-            int bitMaskIndex = 0;
+            var copyLength = lengthToAdd;
+            var nextDataReadPtr = (shiftedBitPosition >> 3) + dataReadPtr;
+            var nextControlBits = BitConverter.ToUInt64(buffer, nextDataReadPtr - 4);
+            var nextBitShift = shiftedBitPosition & 7;
+            var retryCounter = 0;
+            var bitMaskIndex = 0;
 
             if ((1UL << nextBitShift & nextControlBits) != 0)
             {
@@ -178,7 +178,7 @@ namespace ACSParser
             }
             else
             {
-                int incrementedRetryCounter = retryCounter + 1;
+                var incrementedRetryCounter = retryCounter + 1;
                 retryCounter = incrementedRetryCounter;
                 bitMaskIndex = incrementedRetryCounter;
                 if ((1UL << ((incrementedRetryCounter + nextBitShift) & 31) & nextControlBits) != 0)
@@ -199,33 +199,29 @@ namespace ACSParser
             ulong nextControlBits, int incrementSize, int dataWritePtr, int copyLength, int nextDataReadPtr,
             ref long actualDecompressedSize)
         {
-            ulong bitMask = 1UL << (bitMaskIndex & 31);
-            int incrementedBitShift = nextBitShift + 1;
-            int decodedLength = (int)bitMask + incrementSize +
+            var bitMask = 1UL << (bitMaskIndex & 31);
+            var incrementedBitShift = nextBitShift + 1;
+            var decodedLength = (int)bitMask + incrementSize +
                                 (int)((nextControlBits >> ((bitMaskIndex + incrementedBitShift) & 31)) & (bitMask - 1));
 
             if (dataWritePtr < copyLength || decompBuffer.Length - dataWritePtr < decodedLength)
             {
                 return 0;
             }
-            else
-            {
-                int totalBitOffset = 2 * bitMaskIndex + incrementedBitShift;
-                int newWritePtr = dataWritePtr;
-                int newBitOffset = totalBitOffset;
 
-                if (decodedLength > 0)
-                {
-                    int copyDestPtr = dataWritePtr - copyLength;
-                    return CopyDecompressedData(buffer, decompBuffer, copyDestPtr, decodedLength, dataWritePtr,
-                        newWritePtr, nextDataReadPtr, newBitOffset, totalBitOffset, ref actualDecompressedSize);
-                }
-                else
-                {
-                    return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, nextDataReadPtr, newBitOffset,
-                        ref actualDecompressedSize);
-                }
+            var totalBitOffset = 2 * bitMaskIndex + incrementedBitShift;
+            var newWritePtr = dataWritePtr;
+            var newBitOffset = totalBitOffset;
+
+            if (decodedLength > 0)
+            {
+                var copyDestPtr = dataWritePtr - copyLength;
+                return CopyDecompressedData(buffer, decompBuffer, copyDestPtr, decodedLength, dataWritePtr,
+                    newWritePtr, nextDataReadPtr, newBitOffset, totalBitOffset, ref actualDecompressedSize);
             }
+
+            return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, nextDataReadPtr, newBitOffset,
+                ref actualDecompressedSize);
         }
 
         private static long CopyDecompressedData(byte[] buffer, byte[] decompBuffer, int copyDestPtr,
@@ -249,9 +245,9 @@ namespace ACSParser
         private static long UpdatePointersAfterCopy(byte[] buffer, byte[] decompBuffer, int newWritePtr,
             int nextReadPtr, int newBitOffset, ref long actualDecompressedSize)
         {
-            int currentWritePtr = newWritePtr;
-            int currentReadPtr = (newBitOffset >> 3) + nextReadPtr;
-            int bitOffset = newBitOffset & 7;
+            var currentWritePtr = newWritePtr;
+            var currentReadPtr = (newBitOffset >> 3) + nextReadPtr;
+            var bitOffset = newBitOffset & 7;
             return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset,
                 ref actualDecompressedSize);
         }
