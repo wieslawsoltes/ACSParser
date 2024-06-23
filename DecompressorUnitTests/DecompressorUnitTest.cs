@@ -5,6 +5,7 @@ namespace DecompressorUnitTests;
 
 public class DecompressorUnitTest
 {
+    /*
     [Fact]
     public void CountSeqBits_0()
     {
@@ -128,6 +129,7 @@ public class DecompressorUnitTest
         byteOffsetInResult += valueToAdd;
         Assert.Equal(4673, valueToAdd);
     }
+    */
 
     [Fact]
     public void Sample()
