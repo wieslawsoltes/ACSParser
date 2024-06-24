@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACSParser", "ACSParser\ACSP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecompressorUnitTests", "DecompressorUnitTests\DecompressorUnitTests.csproj", "{D0B6213E-222C-4C22-BA79-9301C30A3FF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACDParser", "ACDParser\ACDParser.csproj", "{A9BD7BB8-9D47-48D4-A0CD-E82C890AD2BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D0B6213E-222C-4C22-BA79-9301C30A3FF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0B6213E-222C-4C22-BA79-9301C30A3FF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0B6213E-222C-4C22-BA79-9301C30A3FF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9BD7BB8-9D47-48D4-A0CD-E82C890AD2BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9BD7BB8-9D47-48D4-A0CD-E82C890AD2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9BD7BB8-9D47-48D4-A0CD-E82C890AD2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9BD7BB8-9D47-48D4-A0CD-E82C890AD2BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
