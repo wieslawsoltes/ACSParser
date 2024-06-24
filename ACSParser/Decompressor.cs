@@ -5,16 +5,10 @@ public static class Decompressor
     public static byte[] Decompress(byte[] compressed, int expectedDecompressedSize)
     {
         var compressedSize = (uint)compressed.Length;
-
-        // Allocate memory for decompressed data
         var decompressed = new byte[expectedDecompressedSize];
-
-        // Temporary buffer for decompression (size based on the function's behavior)
         var tempBuffer = new byte[compressedSize + expectedDecompressedSize];
-        // Copy compressed data to temp_buffer (the function seems to work backwards)
-        Array.Copy(compressed, tempBuffer, compressedSize);
 
-        // Call the decompression function
+        Array.Copy(compressed, tempBuffer, compressedSize);
 
         var result = DecompressCore(
             tempBuffer,
