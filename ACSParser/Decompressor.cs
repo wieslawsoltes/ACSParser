@@ -64,8 +64,7 @@ public static class Decompressor
                     var currentWritePtr = 0;
                     var currentReadPtr = 5;
                     var bitOffset = 0;
-                    return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset,
-                        ref actualDecompressedSize);
+                    return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
                 }
             }
 
@@ -88,8 +87,7 @@ public static class Decompressor
 
         if ((controlBits & (1UL << bitOffset)) == 0)
         {
-            return HandleLiteralByte(buffer, decompBuffer, controlBits, currentReadPtr, currentWritePtr, bitOffset,
-                ref actualDecompressedSize);
+            return HandleLiteralByte(buffer, decompBuffer, controlBits, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
         }
 
         int shiftedBitPosition;
@@ -132,8 +130,7 @@ public static class Decompressor
             }
         }
 
-        return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr, shiftedBitPosition,
-            lengthToAdd, incrementSize, ref actualDecompressedSize);
+        return DecodeNextBlock(buffer, decompBuffer, currentReadPtr, currentWritePtr, shiftedBitPosition, lengthToAdd, incrementSize, ref actualDecompressedSize);
     }
 
     private static long HandleLiteralByte(
@@ -153,8 +150,7 @@ public static class Decompressor
         decompBuffer[currentWritePtr] = (byte)(controlBits >> (bitOffset + 1));
         var newWritePtr = currentWritePtr + 1;
         var newBitOffset = bitOffset + 9;
-        return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset,
-            ref actualDecompressedSize);
+        return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset, ref actualDecompressedSize);
     }
 
     private static long DecodeNextBlock(
@@ -176,13 +172,11 @@ public static class Decompressor
 
         if ((1UL << nextBitShift & nextControlBits) != 0)
         {
-            return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift,
-                dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
+            return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
         }
         else
         {
-            return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits,
-                incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
+            return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
         }
     }
 
@@ -210,14 +204,11 @@ public static class Decompressor
             bitMaskIndex = incrementedRetryCounter;
             if ((1UL << ((incrementedRetryCounter + nextBitShift) & 31) & nextControlBits) != 0)
             {
-                return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits,
-                    nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize,
-                    ref actualDecompressedSize);
+                return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
             }
             else
             {
-                return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits,
-                    incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
+                return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
             }
         }
     }
@@ -236,8 +227,7 @@ public static class Decompressor
     {
         var bitMask = 1UL << (bitMaskIndex & 31);
         var incrementedBitShift = nextBitShift + 1;
-        var decodedLength = (int)bitMask + incrementSize +
-                            (int)((nextControlBits >> ((bitMaskIndex + incrementedBitShift) & 31)) & (bitMask - 1));
+        var decodedLength = (int)bitMask + incrementSize + (int)((nextControlBits >> ((bitMaskIndex + incrementedBitShift) & 31)) & (bitMask - 1));
 
         if (dataWritePtr < copyLength || decompBuffer.Length - dataWritePtr < decodedLength)
         {
@@ -295,8 +285,7 @@ public static class Decompressor
 
         newWritePtr = copySourcePtr;
 
-        return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, nextReadPtr, newBitOffset,
-            ref actualDecompressedSize);
+        return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, nextReadPtr, newBitOffset, ref actualDecompressedSize);
     }
 
     private static long UpdatePointersAfterCopy(
@@ -310,7 +299,6 @@ public static class Decompressor
         var currentWritePtr = newWritePtr;
         var currentReadPtr = (newBitOffset >> 3) + nextReadPtr;
         var bitOffset = newBitOffset & 7;
-        return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset,
-            ref actualDecompressedSize);
+        return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
     }
 }
