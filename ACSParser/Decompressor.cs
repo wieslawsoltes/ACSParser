@@ -2,34 +2,27 @@
 
 public static class Decompressor
 {
-    public static byte[] Decompress(byte[] compressed, int expectedDecompressedSize)
+    public static BYTE[] Decompress(BYTE[] compressed, LONG expectedDecompressedSize)
     {
-        var compressedSize = (uint)compressed.Length;
-        var decompressed = new byte[expectedDecompressedSize];
-        var tempBuffer = new byte[compressedSize + expectedDecompressedSize];
+        var compressedSize = (ULONG)compressed.Length;
+        var decompressed = new BYTE[expectedDecompressedSize];
+        var tempBuffer = new BYTE[compressedSize + expectedDecompressedSize];
 
         Array.Copy(compressed, tempBuffer, compressedSize);
 
-        var result = DecompressCore(
-            tempBuffer,
-            compressedSize,
-            decompressed,
-            out var actualDecompressedSize);
-
+        var result = DecompressCore(tempBuffer, compressedSize, decompressed, out _);
         if (result == 1)
         {
             return decompressed;
         }
-        else
-        {
-            throw new InvalidOperationException("Decompression failed");
-        }
+
+        throw new InvalidOperationException("Decompression failed");
     }
 
     private static long DecompressCore(
-        byte[] buffer,
-        uint compressedDataLen,
-        byte[] decompBuffer,
+        BYTE[] buffer,
+        ULONG compressedDataLen,
+        BYTE[] decompBuffer,
         out long actualDecompressedSize)
     {
         actualDecompressedSize = 0;
@@ -39,7 +32,7 @@ public static class Decompressor
             return 0;
         }
 
-        var endBufferPtr = (int)compressedDataLen - 1;
+        var endBufferPtr = (LONG)compressedDataLen - 1;
         var endPaddingCounter = 0;
         long result = 0;
 
@@ -53,13 +46,11 @@ public static class Decompressor
                 {
                     return result;
                 }
-                else
-                {
-                    var currentWritePtr = 0;
-                    var currentReadPtr = 5;
-                    var bitOffset = 0;
-                    return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
-                }
+
+                var currentWritePtr = 0;
+                var currentReadPtr = 5;
+                var bitOffset = 0;
+                return ProcessControlBits(buffer, decompBuffer, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
             }
 
             endBufferPtr--;
@@ -70,11 +61,11 @@ public static class Decompressor
     }
 
     private static long ProcessControlBits(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int currentReadPtr,
-        int currentWritePtr,
-        int bitOffset,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG currentReadPtr,
+        LONG currentWritePtr,
+        LONG bitOffset,
         ref long actualDecompressedSize)
     {
         var controlBits = BitConverter.ToUInt64(buffer, currentReadPtr - 4);
@@ -84,20 +75,20 @@ public static class Decompressor
             return HandleLiteralByte(buffer, decompBuffer, controlBits, currentReadPtr, currentWritePtr, bitOffset, ref actualDecompressedSize);
         }
 
-        int shiftedBitPosition;
-        int lengthToAdd;
-        int incrementSize;
+        LONG shiftedBitPosition;
+        LONG lengthToAdd;
+        LONG incrementSize;
 
         if ((controlBits & (2UL << bitOffset)) == 0)
         {
             shiftedBitPosition = bitOffset | 8;
-            lengthToAdd = (int)((controlBits >> (bitOffset + 2) & 63) + 1);
+            lengthToAdd = (LONG)((controlBits >> (bitOffset + 2) & 63) + 1);
             incrementSize = 1;
         }
         else if ((controlBits & (4UL << bitOffset)) == 0)
         {
             shiftedBitPosition = bitOffset + 12;
-            lengthToAdd = (int)((controlBits >> (bitOffset + 3) & 511) + 65);
+            lengthToAdd = (LONG)((controlBits >> (bitOffset + 3) & 511) + 65);
             incrementSize = 1;
         }
         else
@@ -106,7 +97,7 @@ public static class Decompressor
             if ((controlBits & (8UL << bitOffset)) == 0)
             {
                 shiftedBitPosition = bitOffset | 16;
-                lengthToAdd = (int)(maskedValue & 4095) + 577;
+                lengthToAdd = (LONG)(maskedValue & 4095) + 577;
                 incrementSize = 1;
             }
             else
@@ -119,7 +110,7 @@ public static class Decompressor
                 }
 
                 shiftedBitPosition = bitOffset | 24;
-                lengthToAdd = (int)offsetValue + 0x1241;
+                lengthToAdd = (LONG)offsetValue + 0x1241;
                 incrementSize = 2;
             }
         }
@@ -128,12 +119,12 @@ public static class Decompressor
     }
 
     private static long HandleLiteralByte(
-        byte[] buffer,
-        byte[] decompBuffer,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
         ulong controlBits,
-        int currentReadPtr,
-        int currentWritePtr,
-        int bitOffset,
+        LONG currentReadPtr,
+        LONG currentWritePtr,
+        LONG bitOffset,
         ref long actualDecompressedSize)
     {
         if (currentWritePtr >= decompBuffer.Length)
@@ -141,20 +132,20 @@ public static class Decompressor
             return 0;
         }
 
-        decompBuffer[currentWritePtr] = (byte)(controlBits >> (bitOffset + 1));
+        decompBuffer[currentWritePtr] = (BYTE)(controlBits >> (bitOffset + 1));
         var newWritePtr = currentWritePtr + 1;
         var newBitOffset = bitOffset + 9;
         return UpdatePointersAfterCopy(buffer, decompBuffer, newWritePtr, currentReadPtr, newBitOffset, ref actualDecompressedSize);
     }
 
     private static long DecodeNextBlock(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int dataReadPtr,
-        int dataWritePtr,
-        int shiftedBitPosition,
-        int lengthToAdd,
-        int incrementSize,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG dataReadPtr,
+        LONG dataWritePtr,
+        LONG shiftedBitPosition,
+        LONG lengthToAdd,
+        LONG incrementSize,
         ref long actualDecompressedSize)
     {
         var copyLength = lengthToAdd;
@@ -164,64 +155,52 @@ public static class Decompressor
         var retryCounter = 0;
         var bitMaskIndex = 0;
 
-        if ((1UL << nextBitShift & nextControlBits) != 0)
-        {
-            return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
-        }
-        else
-        {
-            return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
-        }
+        return (1UL << nextBitShift & nextControlBits) != 0 
+            ? CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize) 
+            : ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
     }
 
     private static long CheckBitMaskLoop(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int retryCounter,
-        int bitMaskIndex,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG retryCounter,
+        LONG bitMaskIndex,
         ulong nextControlBits,
-        int nextBitShift,
-        int dataWritePtr,
-        int copyLength,
-        int nextDataReadPtr,
-        int incrementSize,
+        LONG nextBitShift,
+        LONG dataWritePtr,
+        LONG copyLength,
+        LONG nextDataReadPtr,
+        LONG incrementSize,
         ref long actualDecompressedSize)
     {
         if (retryCounter > 10)
         {
             return 0;
         }
-        else
-        {
-            var incrementedRetryCounter = retryCounter + 1;
-            retryCounter = incrementedRetryCounter;
-            bitMaskIndex = incrementedRetryCounter;
-            if ((1UL << ((incrementedRetryCounter + nextBitShift) & 31) & nextControlBits) != 0)
-            {
-                return CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize);
-            }
-            else
-            {
-                return ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
-            }
-        }
+
+        var incrementedRetryCounter = retryCounter + 1;
+        retryCounter = incrementedRetryCounter;
+        bitMaskIndex = incrementedRetryCounter;
+        return (1UL << ((incrementedRetryCounter + nextBitShift) & 31) & nextControlBits) != 0 
+            ? CheckBitMaskLoop(buffer, decompBuffer, retryCounter, bitMaskIndex, nextControlBits, nextBitShift, dataWritePtr, copyLength, nextDataReadPtr, incrementSize, ref actualDecompressedSize) 
+            : ProcessDecodedLength(buffer, decompBuffer, bitMaskIndex, nextBitShift, nextControlBits, incrementSize, dataWritePtr, copyLength, nextDataReadPtr, ref actualDecompressedSize);
     }
 
     private static long ProcessDecodedLength(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int bitMaskIndex,
-        int nextBitShift,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG bitMaskIndex,
+        LONG nextBitShift,
         ulong nextControlBits,
-        int incrementSize,
-        int dataWritePtr,
-        int copyLength,
-        int nextDataReadPtr,
+        LONG incrementSize,
+        LONG dataWritePtr,
+        LONG copyLength,
+        LONG nextDataReadPtr,
         ref long actualDecompressedSize)
     {
         var bitMask = 1UL << (bitMaskIndex & 31);
         var incrementedBitShift = nextBitShift + 1;
-        var decodedLength = (int)bitMask + incrementSize + (int)((nextControlBits >> ((bitMaskIndex + incrementedBitShift) & 31)) & (bitMask - 1));
+        var decodedLength = (LONG)bitMask + incrementSize + (LONG)((nextControlBits >> ((bitMaskIndex + incrementedBitShift) & 31)) & (bitMask - 1));
 
         if (dataWritePtr < copyLength || decompBuffer.Length - dataWritePtr < decodedLength)
         {
@@ -258,15 +237,15 @@ public static class Decompressor
     }
 
     private static long CopyDecompressedData(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int copyDestPtr,
-        int remainingLength,
-        int copySourcePtr,
-        int newWritePtr,
-        int nextReadPtr,
-        int newBitOffset,
-        int totalBitOffset,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG copyDestPtr,
+        LONG remainingLength,
+        LONG copySourcePtr,
+        LONG newWritePtr,
+        LONG nextReadPtr,
+        LONG newBitOffset,
+        LONG totalBitOffset,
         ref long actualDecompressedSize)
     {
         while (remainingLength > 0)
@@ -283,11 +262,11 @@ public static class Decompressor
     }
 
     private static long UpdatePointersAfterCopy(
-        byte[] buffer,
-        byte[] decompBuffer,
-        int newWritePtr,
-        int nextReadPtr,
-        int newBitOffset,
+        BYTE[] buffer,
+        BYTE[] decompBuffer,
+        LONG newWritePtr,
+        LONG nextReadPtr,
+        LONG newBitOffset,
         ref long actualDecompressedSize)
     {
         var currentWritePtr = newWritePtr;
