@@ -40,10 +40,10 @@
       <TreeViewItem Header="Character" 
                     IsExpanded="True">
         <TreeViewItem Header="Animations" 
-                      Items="{Binding Animations}" 
+                      ItemsSource="{Binding Animations}" 
                       IsExpanded="True" />
         <TreeViewItem Header="States" 
-                      Items="{Binding States}" 
+                      ItemsSource="{Binding States}" 
                       IsExpanded="True"/>
       </TreeViewItem>
     </TreeView>
