@@ -42,10 +42,12 @@
             </Panel>
             
             <!-- Controls -->
-            <Grid Grid.Row="1" 
+            <Grid Name="PART_ControlsGrid"
+                  Grid.Row="1" 
                   ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto"
                   Margin="8"
-                  Height="40">
+                  Height="40"
+                  IsVisible="{TemplateBinding ShowControls}">
               
               <!-- Play/Pause Button -->
               <Button Name="PART_PlayPauseButton"

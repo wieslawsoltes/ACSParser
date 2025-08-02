@@ -120,9 +120,17 @@
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,10"/>
             
+            <!-- Controls Toggle -->
+            <CheckBox Name="ShowControlsCheckBox"
+                      Content="Show Player Controls"
+                      IsChecked="True"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,10"/>
+            
             <!-- Animation Player with proper binding -->
             <controls:AnimationPlayer Animation="{Binding #AnimationStackPanel.DataContext}"
                                      DataContext="{Binding $parent[UserControl].DataContext}"
+                                     ShowControls="{Binding #ShowControlsCheckBox.IsChecked}"
                                      Width="400" 
                                      Height="300"
                                      Margin="0,10,0,0"/>

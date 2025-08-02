@@ -19,10 +19,19 @@ public class AnimationPlayer : TemplatedControl
     public static readonly StyledProperty<AcsAnimation?> AnimationProperty = 
         AvaloniaProperty.Register<AnimationPlayer, AcsAnimation?>(nameof(Animation));
 
+    public static readonly StyledProperty<bool> ShowControlsProperty = 
+        AvaloniaProperty.Register<AnimationPlayer, bool>(nameof(ShowControls), true);
+
     public AcsAnimation? Animation
     {
         get => GetValue(AnimationProperty);
         set => SetValue(AnimationProperty, value);
+    }
+
+    public bool ShowControls
+    {
+        get => GetValue(ShowControlsProperty);
+        set => SetValue(ShowControlsProperty, value);
     }
 
     private class AnimationFrame
@@ -46,6 +55,7 @@ public class AnimationPlayer : TemplatedControl
     private CheckBox? _loopCheckBox;
     private CheckBox? _audioCheckBox;
     private StackPanel? _noAnimationText;
+    private Grid? _controlsGrid;
 
     private List<AnimationFrame>? _frames;
     private int _currentFrameIndex = 0;
@@ -72,6 +82,7 @@ public class AnimationPlayer : TemplatedControl
         _loopCheckBox = e.NameScope.Find<CheckBox>("PART_LoopCheckBox");
         _audioCheckBox = e.NameScope.Find<CheckBox>("PART_AudioCheckBox");
         _noAnimationText = e.NameScope.Find<StackPanel>("PART_NoAnimationText");
+        _controlsGrid = e.NameScope.Find<Grid>("PART_ControlsGrid");
         
 
 
