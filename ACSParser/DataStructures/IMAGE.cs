@@ -46,7 +46,17 @@ public class IMAGE
     public void SaveBitmap(Stream stream, PALETTECOLOR[] colorTable)
     {
         var decompressedDataSize = ((Width + 3) & 0xFC) * Height;
-        var decompressed = Decompressor.Decompress(ImageData.Data, decompressedDataSize);
+        
+        // Decompress image data if needed
+        BYTE[] decompressed;
+        if (IsImageDataCompressed != 0)
+        {
+            decompressed = Decompressor.Decompress(ImageData.Data, decompressedDataSize);
+        }
+        else
+        {
+            decompressed = ImageData.Data;
+        }
 
         using var writer = new BinaryWriter(stream);
 

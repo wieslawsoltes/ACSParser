@@ -22,8 +22,19 @@ public class COMPRESSED
         {
             var compressedData = reader.ReadBytes((int)compressed.CompressedSize);
 
-            // TODO: Decompress. Data size is compressed.UncompressedSize after decompression.
-            compressed.Data = compressedData;
+            // Decompress the data using the Decompressor
+            try
+            {
+                compressed.Data = Decompressor.Decompress(compressedData, (int)compressed.UncompressedSize);
+                // Mark as no longer compressed by setting compressed size to 0
+                compressed.CompressedSize = 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to decompress COMPRESSED data: {ex.Message}");
+                // Keep original compressed data as fallback
+                compressed.Data = compressedData;
+            }
         }
 
         return compressed;
