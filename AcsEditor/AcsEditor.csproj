@@ -17,6 +17,8 @@
     <PackageReference Include="Avalonia.Desktop" Version="11.0.11" />
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.11" />
     <PackageReference Include="Avalonia.Controls.Skia" Version="11.0.0.18" />
+    <PackageReference Include="ModelContextProtocol" Version="0.3.0-preview.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ACSParser\ACSParser.csproj" />
