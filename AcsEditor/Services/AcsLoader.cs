@@ -41,6 +41,13 @@ public class AcsLoader
 
     private static AcsFile ConvertToViewModel(ACS acsData, string filePath)
     {
+        Console.WriteLine($"ACS TransparentColorIndex from file: {acsData.CharacterInfo.TransparentColorIndex}");
+        if (acsData.CharacterInfo.ColorTable != null && acsData.CharacterInfo.TransparentColorIndex < acsData.CharacterInfo.ColorTable.Length)
+        {
+            var transparentColor = acsData.CharacterInfo.ColorTable[acsData.CharacterInfo.TransparentColorIndex].Color;
+            Console.WriteLine($"Transparent color from palette: RGB({transparentColor.Red}, {transparentColor.Green}, {transparentColor.Blue})");
+        }
+        
         var acsFile = new AcsFile
         {
             Name = Path.GetFileNameWithoutExtension(filePath),
