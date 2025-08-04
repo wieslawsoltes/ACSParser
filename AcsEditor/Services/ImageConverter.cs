@@ -44,6 +44,13 @@ public class ImageConverter
                     if (skBitmap != null)
                     {
                         Console.WriteLine($"Successfully converted image to SKBitmap: {skBitmap.Width}x{skBitmap.Height}");
+                        
+                        // Apply transparency if we have a color table and transparent color index
+                        if (colorTable != null && transparentColorIndex < colorTable.Length)
+                        {
+                            skBitmap = ApplyTransparency(skBitmap, colorTable, transparentColorIndex);
+                        }
+                        
                         acsImage.Bitmap = skBitmap;
                         return skBitmap;
                     }
@@ -89,6 +96,13 @@ public class ImageConverter
                     if (skBitmap != null)
                     {
                         Console.WriteLine($"Successfully converted image to SKBitmap: {skBitmap.Width}x{skBitmap.Height}");
+                        
+                        // Apply transparency if we have a color table and transparent color index
+                        if (colorTable != null && transparentColorIndex < colorTable.Length)
+                        {
+                            skBitmap = ApplyTransparency(skBitmap, colorTable, transparentColorIndex);
+                        }
+                        
                         acsImage.Bitmap = skBitmap;
                         return skBitmap;
                     }
@@ -190,6 +204,52 @@ public class ImageConverter
             Console.WriteLine($"Error compositing frame images: {ex.Message}");
             // Fallback to first image
             return GetBitmapForFrame(acsFile, frame.Images[0]);
+        }
+    }
+    
+    private static SKBitmap ApplyTransparency(SKBitmap originalBitmap, PALETTECOLOR[] colorTable, byte transparentColorIndex)
+    {
+        try
+        {
+            // Get the transparent color from the palette
+            var transparentColor = colorTable[transparentColorIndex].Color;
+            var transparentSKColor = new SKColor(transparentColor.Red, transparentColor.Green, transparentColor.Blue);
+            
+            Console.WriteLine($"Applying transparency for color index {transparentColorIndex}: RGB({transparentColor.Red}, {transparentColor.Green}, {transparentColor.Blue})");
+            
+            // Create a new bitmap with alpha channel
+            var transparentBitmap = new SKBitmap(originalBitmap.Width, originalBitmap.Height, SKColorType.Rgba8888, SKAlphaType.Premul);
+            
+            // Copy pixels and apply transparency
+            for (int y = 0; y < originalBitmap.Height; y++)
+            {
+                for (int x = 0; x < originalBitmap.Width; x++)
+                {
+                    var pixel = originalBitmap.GetPixel(x, y);
+                    
+                    // Check if this pixel matches the transparent color (ignoring alpha)
+                    if (pixel.Red == transparentSKColor.Red && 
+                        pixel.Green == transparentSKColor.Green && 
+                        pixel.Blue == transparentSKColor.Blue)
+                    {
+                        // Make this pixel transparent
+                        transparentBitmap.SetPixel(x, y, SKColors.Transparent);
+                    }
+                    else
+                    {
+                        // Keep the original pixel with full opacity
+                        transparentBitmap.SetPixel(x, y, new SKColor(pixel.Red, pixel.Green, pixel.Blue, 255));
+                    }
+                }
+            }
+            
+            Console.WriteLine($"Applied transparency to {originalBitmap.Width}x{originalBitmap.Height} bitmap");
+            return transparentBitmap;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error applying transparency: {ex.Message}");
+            return originalBitmap; // Return original bitmap if transparency application fails
         }
     }
 }
