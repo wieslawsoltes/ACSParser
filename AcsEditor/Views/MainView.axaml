@@ -1,0 +1,229 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:AcsEditor.Controls"
+             xmlns:models="clr-namespace:AcsEditor.Models"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="AcsEditor.Views.MainView"
+             x:CompileBindings="True" x:DataType="models:AcsFile">
+  
+  <Grid RowDefinitions="Auto,*" ColumnDefinitions="350,8,*">
+    
+    <!-- File Operations Panel -->
+    <Grid ColumnDefinitions="*,Auto,Auto"
+          Grid.Row="0"
+          Grid.Column="0"
+          Grid.ColumnSpan="3"
+          Margin="6">
+      <TextBox Name="PathTextBox"
+               Watermark="Select an ACS file to open..."
+               Grid.Column="0"
+               Margin="0,0,6,0"/>
+      <Button Name="BrowseButton"
+              Content="Browse..."
+              Click="BrowseButton_OnClick"
+              Grid.Column="1"
+              Margin="0,0,6,0"/>
+      <Button Name="LoadButton"
+              Content="Load"
+              Click="LoadButton_OnClick"
+              Grid.Column="2"/>
+    </Grid>
+
+    <!-- Navigation Tree -->
+    <TreeView Name="NavigationTreeView"
+              SelectionChanged="TreeView_OnSelectionChanged"
+              Grid.Row="1"
+              Grid.Column="0"
+              Margin="6">
+      <TreeView.DataTemplates>
+        
+        <!-- Animation Template -->
+        <TreeDataTemplate x:DataType="models:AcsAnimation" ItemsSource="{Binding Frames}">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🎬" Margin="0,0,4,0"/>
+            <TextBlock Text="{Binding Name}" />
+          </StackPanel>
+        </TreeDataTemplate>
+        
+        <!-- Frame Template -->
+        <DataTemplate x:DataType="models:AcsFrame">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🖼️" Margin="0,0,4,0"/>
+            <TextBlock Text="{Binding Duration, StringFormat='Frame ({0}ms)'}" />
+          </StackPanel>
+        </DataTemplate>
+        
+        <!-- Image Template -->
+        <DataTemplate x:DataType="models:AcsImage">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🖼️" Margin="0,0,4,0"/>
+            <TextBlock Text="{Binding Name}" />
+            <TextBlock Text=" (" Margin="4,0,0,0"/>
+            <TextBlock Text="{Binding Width}" />
+            <TextBlock Text="x" Margin="0"/>
+            <TextBlock Text="{Binding Height}" />
+            <TextBlock Text=")" />
+          </StackPanel>
+        </DataTemplate>
+        
+        <!-- Audio Template -->
+        <DataTemplate x:DataType="models:AcsAudio">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🔊" Margin="0,0,4,0"/>
+            <TextBlock Text="{Binding Name}" />
+          </StackPanel>
+        </DataTemplate>
+        
+      </TreeView.DataTemplates>
+      
+      <!-- Tree Structure -->
+      <TreeViewItem Header="📁 Character" IsExpanded="True">
+        <TreeViewItem Header="🎬 Animations" 
+                      ItemsSource="{Binding Animations}" 
+                      IsExpanded="True" />
+        <TreeViewItem Header="🖼️ Images" 
+                      ItemsSource="{Binding Images}" 
+                      IsExpanded="False" />
+        <TreeViewItem Header="🔊 Audio" 
+                      ItemsSource="{Binding AudioFiles}" 
+                      IsExpanded="False" />
+      </TreeViewItem>
+      
+    </TreeView>
+
+    <!-- Splitter -->
+    <GridSplitter Grid.Row="1" Grid.Column="1" />
+
+    <!-- Content Display Area -->
+    <ContentControl Name="ContentDisplayControl"
+                    Grid.Row="1" 
+                    Grid.Column="2"
+                    Margin="6">
+      <ContentControl.DataTemplates>
+        
+        <!-- Animation Display Template -->
+        <DataTemplate x:DataType="models:AcsAnimation">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="AnimationStackPanel">
+            <TextBlock Text="{Binding Name, StringFormat='Animation: {0}'}" 
+                       FontSize="18" FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding TransitionType, StringFormat='Transition Type: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding ReturnAnimation, StringFormat='Return Animation: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding Frames.Count, StringFormat='Frames: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            
+            <!-- Controls Toggle -->
+            <CheckBox Name="ShowControlsCheckBox"
+                      Content="Show Player Controls"
+                      IsChecked="True"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,10"/>
+            
+            <!-- Animation Player with proper binding -->
+            <controls:AnimationPlayer Animation="{Binding #AnimationStackPanel.DataContext}"
+                                     DataContext="{Binding $parent[UserControl].DataContext}"
+                                     ShowControls="{Binding #ShowControlsCheckBox.IsChecked}"
+                                     Width="400" 
+                                     Height="300"
+                                     Margin="0,10,0,0"/>
+            
+            <!-- Debug: Show what we're binding to -->
+            <TextBlock Text="{Binding Name, StringFormat='Debug - Animation Name: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,5,0,0"
+                       FontSize="12"
+                       Opacity="0.7"/>
+          </StackPanel>
+        </DataTemplate>
+        
+        <!-- Frame Display Template -->
+        <DataTemplate x:DataType="models:AcsFrame">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Frame Details" 
+                       FontSize="18" FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding Duration, StringFormat='Duration: {0} ms'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding AudioIndex, StringFormat='Audio Index: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding ExitFrameIndex, StringFormat='Exit Frame: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding Images.Count, StringFormat='Images: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding Branches.Count, StringFormat='Branches: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding Overlays.Count, StringFormat='Overlays: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            
+            <!-- Frame Preview -->
+            <controls:FramePreview Frame="{Binding}" 
+                                  DataContext="{Binding $parent[UserControl].DataContext}"
+                                  Width="300" 
+                                  Height="250"
+                                  Margin="0,10,0,0"/>
+          </StackPanel>
+        </DataTemplate>
+        
+        <!-- Image Display Template -->
+        <DataTemplate x:DataType="models:AcsImage">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Name, StringFormat='Image: {0}'}" 
+                       FontSize="18" FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding Width, StringFormat='Width: {0} px'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding Height, StringFormat='Height: {0} px'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding IsCompressed, StringFormat='Compressed: {0}'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            
+            <!-- Image Preview -->
+            <controls:ImagePreview Image="{Binding}" 
+                                  DataContext="{Binding $parent[UserControl].DataContext}"
+                                  MaxWidth="400" 
+                                  MaxHeight="400"
+                                  Margin="0,10,0,0"/>
+          </StackPanel>
+        </DataTemplate>
+        
+        <!-- Audio Display Template -->
+        <DataTemplate x:DataType="models:AcsAudio">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Name, StringFormat='Audio: {0}'}" 
+                       FontSize="18" FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding AudioData.Length, StringFormat='Size: {0} bytes'}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="Audio playback not implemented yet" 
+                       HorizontalAlignment="Center" 
+                       FontStyle="Italic"
+                       Opacity="0.7"/>
+          </StackPanel>
+        </DataTemplate>
+        
+      </ContentControl.DataTemplates>
+    </ContentControl>
+
+  </Grid>
+</UserControl>

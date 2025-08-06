@@ -14,7 +14,7 @@ public class ANIMATION
 
         animation.AnimationName = STRING.Parse(reader);
         animation.TransitionType = reader.BYTE();
-        animation.AnimationName = STRING.Parse(reader);
+        animation.ReturnAnimation = STRING.Parse(reader);
 
         USHORT animationFramesCount = reader.USHORT();
         animation.AnimationFrames = new ACSFRAMEINFO[animationFramesCount];

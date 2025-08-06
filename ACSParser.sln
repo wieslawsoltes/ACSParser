@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACDParser", "ACDParser\ACDP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACSParserConsole", "ACSParserConsole\ACSParserConsole.csproj", "{AC2CCE58-FB99-40B5-B36D-E23EAF06D55F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcsEditor", "AcsEditor\AcsEditor.csproj", "{8A35AB5F-C1F0-444E-BF59-972CE54055DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{AC2CCE58-FB99-40B5-B36D-E23EAF06D55F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC2CCE58-FB99-40B5-B36D-E23EAF06D55F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC2CCE58-FB99-40B5-B36D-E23EAF06D55F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A35AB5F-C1F0-444E-BF59-972CE54055DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A35AB5F-C1F0-444E-BF59-972CE54055DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A35AB5F-C1F0-444E-BF59-972CE54055DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A35AB5F-C1F0-444E-BF59-972CE54055DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

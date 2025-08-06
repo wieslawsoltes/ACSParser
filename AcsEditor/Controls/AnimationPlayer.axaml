@@ -1,0 +1,107 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AcsEditor.Controls"
+        xmlns:skia="using:Avalonia.Controls.Skia">
+  <Design.PreviewWith>
+    <controls:AnimationPlayer Width="400" Height="300" />
+  </Design.PreviewWith>
+  
+  <Style Selector="controls|AnimationPlayer">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4">
+          <Grid RowDefinitions="*,Auto">
+            
+            <!-- Animation Display Area -->
+            <Panel Grid.Row="0" Background="White" MinHeight="200">
+              <skia:SKBitmapControl Name="PART_BitmapControl"
+                                    Bitmap="{x:Null}"
+                                    Stretch="Uniform"
+                                    StretchDirection="Both"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+              
+              <!-- Overlay for no animation message -->
+              <StackPanel Name="PART_NoAnimationText"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         IsVisible="True">
+                <TextBlock Text="No animation selected"
+                           HorizontalAlignment="Center"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,4"/>
+                <TextBlock Text="Select an animation from the tree view on the left to preview it"
+                           HorizontalAlignment="Center"
+                           FontStyle="Italic"
+                           Opacity="0.7"
+                           TextWrapping="Wrap"
+                           MaxWidth="250"
+                           TextAlignment="Center"/>
+              </StackPanel>
+            </Panel>
+            
+            <!-- Controls -->
+            <Grid Name="PART_ControlsGrid"
+                  Grid.Row="1" 
+                  ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto"
+                  Margin="8"
+                  Height="40"
+                  IsVisible="{TemplateBinding ShowControls}">
+              
+              <!-- Play/Pause Button -->
+              <Button Name="PART_PlayPauseButton"
+                      Grid.Column="0"
+                      Width="60"
+                      Content="Play"
+                      HorizontalContentAlignment="Center"
+                      Margin="0,0,8,0"/>
+              
+              <!-- Progress Slider -->
+              <Slider Name="PART_ProgressSlider"
+                      Grid.Column="1"
+                      Minimum="0"
+                      Maximum="100"
+                      Value="0"
+                      VerticalAlignment="Center"
+                      Margin="0,0,8,0"/>
+              
+              <!-- Speed Control -->
+              <TextBlock Grid.Column="2" 
+                         Text="Speed:" 
+                         VerticalAlignment="Center"
+                         Margin="0,0,4,0"/>
+              <ComboBox Name="PART_SpeedComboBox"
+                        Grid.Column="3"
+                        SelectedIndex="2"
+                        Width="60"
+                        Margin="0,0,8,0">
+                <ComboBoxItem Content="0.5x"/>
+                <ComboBoxItem Content="0.75x"/>
+                <ComboBoxItem Content="1x"/>
+                <ComboBoxItem Content="1.5x"/>
+                <ComboBoxItem Content="2x"/>
+              </ComboBox>
+              
+              <!-- Loop Toggle -->
+              <CheckBox Name="PART_LoopCheckBox"
+                        Grid.Column="4"
+                        Content="Loop"
+                        IsChecked="True"
+                        VerticalAlignment="Center"
+                        Margin="0,0,8,0"/>
+              
+              <!-- Audio Toggle -->
+              <CheckBox Name="PART_AudioCheckBox"
+                        Grid.Column="5"
+                        Content="Audio"
+                        IsChecked="True"
+                        VerticalAlignment="Center"/>
+            </Grid>
+            
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
